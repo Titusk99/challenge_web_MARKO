@@ -3,9 +3,34 @@ import { ref, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import { Search, ShoppingBag, User, Menu } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/auth'
+import MegaMenu from './MegaMenu.vue'
+import { navigation } from '@/data/navigation'
 
 const auth = useAuthStore()
 const isScrolled = ref(false)
+
+// Mega Menu Logic
+const isMenuOpen = ref(false)
+const activeHoverCategory = ref(null)
+let closeTimer = null
+
+const openMenu = (categoryKey) => {
+  clearTimeout(closeTimer)
+  activeHoverCategory.value = navigation[categoryKey]
+  isMenuOpen.value = true
+}
+
+const scheduleCloseMenu = () => {
+  closeTimer = setTimeout(() => {
+    isMenuOpen.value = false
+    activeHoverCategory.value = null
+  }, 100)
+}
+
+const keepMenuOpen = () => {
+  clearTimeout(closeTimer)
+  isMenuOpen.value = true
+}
 
 onMounted(() => {
   window.addEventListener('scroll', () => {
@@ -18,10 +43,11 @@ onMounted(() => {
   <nav 
     class="sticky top-0 z-40 transition-all duration-500 border-b border-transparent"
     :class="[
-      isScrolled ? 'bg-gl-white-glass backdrop-blur-md shadow-sm border-gray-100' : 'bg-transparent'
+      isScrolled || isMenuOpen ? 'bg-gl-white-glass backdrop-blur-md shadow-sm border-gray-100' : 'bg-transparent'
     ]"
+    @mouseleave="scheduleCloseMenu"
   >
-    <div class="container mx-auto px-6 h-20 flex items-center justify-between">
+    <div class="container mx-auto px-6 h-20 flex items-center justify-between relative z-50">
       
       <!-- Mobile Menu Button -->
       <button class="lg:hidden p-2 hover:bg-black/5 rounded-full transition-colors">
@@ -37,20 +63,36 @@ onMounted(() => {
       </RouterLink>
 
       <!-- Desktop Navigation -->
-      <div class="hidden lg:flex items-center space-x-8">
-        <RouterLink to="/category/women" class="text-sm font-medium hover:text-gl-red transition-colors relative group">
+      <div class="hidden lg:flex items-center space-x-8 h-full">
+        <RouterLink 
+            to="/category/women" 
+            class="text-sm font-medium hover:text-gl-red transition-colors relative group h-full flex items-center"
+            @mouseenter="openMenu('women')"
+        >
           WOMEN
-          <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gl-red transition-all duration-300 group-hover:w-full"></span>
+          <span class="absolute bottom-[26px] left-0 w-0 h-0.5 bg-gl-red transition-all duration-300 group-hover:w-full"></span>
         </RouterLink>
-        <RouterLink to="/category/men" class="text-sm font-medium hover:text-gl-red transition-colors relative group">
+        <RouterLink 
+            to="/category/men" 
+            class="text-sm font-medium hover:text-gl-red transition-colors relative group h-full flex items-center"
+            @mouseenter="openMenu('men')"
+        >
           MEN
-          <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gl-red transition-all duration-300 group-hover:w-full"></span>
+          <span class="absolute bottom-[26px] left-0 w-0 h-0.5 bg-gl-red transition-all duration-300 group-hover:w-full"></span>
         </RouterLink>
-        <RouterLink to="/category/beauty" class="text-sm font-medium hover:text-gl-red transition-colors relative group">
+        <RouterLink 
+            to="/category/beauty" 
+            class="text-sm font-medium hover:text-gl-red transition-colors relative group h-full flex items-center"
+            @mouseenter="openMenu('beauty')"
+        >
           BEAUTY
-          <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gl-red transition-all duration-300 group-hover:w-full"></span>
+          <span class="absolute bottom-[26px] left-0 w-0 h-0.5 bg-gl-red transition-all duration-300 group-hover:w-full"></span>
         </RouterLink>
-        <RouterLink to="/sales" class="text-sm font-medium text-gl-red hover:text-black transition-colors relative group">
+        <RouterLink 
+            to="/sales" 
+            class="text-sm font-medium text-gl-red hover:text-black transition-colors relative group h-full flex items-center"
+            @mouseenter="scheduleCloseMenu"
+        >
           SALES
         </RouterLink>
       </div>
@@ -75,5 +117,14 @@ onMounted(() => {
         </button>
       </div>
     </div>
+
+    <!-- Mega Menu Component -->
+    <MegaMenu 
+        :is-open="isMenuOpen" 
+        :active-category="activeHoverCategory" 
+        @mouseenter="keepMenuOpen"
+        @mouseleave="scheduleCloseMenu"
+    />
+
   </nav>
 </template>
