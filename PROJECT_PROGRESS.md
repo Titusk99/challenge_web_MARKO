@@ -14,8 +14,8 @@ Ce document retrace l'avancement du projet MARKO pour l'équipe.
 - [x] Setup FastAPI & PostgreSQL
 - [x] Dockerisation (API + DB)
 
-### 1.3 Composants UI de base (À venir)
-- [ ] Création des composants atomiques (Boutons, Containers)
+### 1.3 Composants UI de base
+- [x] Création des composants atomiques (Boutons, Containers)
 
 ## 🧭 Phase 2: Navigation Immersive (À venir)
 - [ ] Top Bar & Navbar
