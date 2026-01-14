@@ -11,7 +11,12 @@ const router = createRouter({
     routes: [
         {
             path: '/',
-            component: () => import('./views/HomeView.vue'), // We will create this
+            component: () => import('./views/HomeView.vue'),
+        },
+        {
+            path: '/products',
+            name: 'products',
+            component: () => import('./views/ProductListView.vue'), // Products Page
         }
     ]
 })
