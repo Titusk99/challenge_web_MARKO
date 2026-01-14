@@ -26,8 +26,8 @@ Ce document retrace l'avancement du projet MARKO pour l'équipe.
 - [x] Page d'accueil
 - [x] Liste des produits & Filtres
 
-## 💎 Phase 4: Conversion (À venir)
-- [ ] Détail produit
+## 💎 Phase 4: Conversion (En cours)
+- [x] Détail produit
 - [ ] Panier
 - [ ] Paiement
 
