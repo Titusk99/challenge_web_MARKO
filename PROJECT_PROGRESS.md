@@ -26,10 +26,10 @@ Ce document retrace l'avancement du projet MARKO pour l'équipe.
 - [x] Page d'accueil
 - [x] Liste des produits & Filtres
 
-## 💎 Phase 4: Conversion (En cours)
+## 💎 Phase 4: Conversion
 - [x] Détail produit
 - [x] Panier
-- [ ] Paiement
+- [x] Paiement
 
 ## 👤 Phase 5: Espace Client & Admin (À venir)
 - [ ] Authentification

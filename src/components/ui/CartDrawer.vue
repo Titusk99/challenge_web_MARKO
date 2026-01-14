@@ -1,10 +1,12 @@
 <script setup>
 import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
 import { X, Minus, Plus, Trash2 } from 'lucide-vue-next'
 import BaseButton from '@/components/ui/BaseButton.vue'
 
 const cartStore = useCartStore()
+const router = useRouter()
 const { items, isCartOpen, cartTotal } = storeToRefs(cartStore)
 
 const closeCart = () => {
@@ -12,8 +14,8 @@ const closeCart = () => {
 }
 
 const checkout = () => {
-  // TODO: Phase 4.3 Payment
-  console.log('Proceed to checkout')
+  cartStore.toggleCart()
+  router.push('/checkout')
 }
 </script>
 
