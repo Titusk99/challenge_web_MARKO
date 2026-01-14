@@ -28,7 +28,7 @@ Ce document retrace l'avancement du projet MARKO pour l'équipe.
 
 ## 💎 Phase 4: Conversion (En cours)
 - [x] Détail produit
-- [ ] Panier
+- [x] Panier
 - [ ] Paiement
 
 ## 👤 Phase 5: Espace Client & Admin (À venir)
