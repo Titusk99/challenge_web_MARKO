@@ -2,12 +2,14 @@
 
 This document lists all features available on the website, page by page, as well as the specifications of the "Luxury Retail" design system.
 
+
 # BASIC INFORMATION
 Company: MARKO
 Website Name: MARKO
 
 # CONTEXT
 Project Context: E-commerce web app, specializing in branded textile sales
+Code write in english and commentary write in english
 
 # PROJECT VISION
 Objective: Create a platform for selling branded textiles
