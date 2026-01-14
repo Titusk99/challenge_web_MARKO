@@ -29,6 +29,7 @@ Problem Solved: Make buying branded textiles simple and intuitive with numerous 
 ### Backend & Data
 *   **API**: FastAPI (Python)
 *   **Database**: PostgreSQL
+*   **Infrastructure**: Docker & Docker Compose
 *   **Payment**: Stripe API (Simulation)
 
 

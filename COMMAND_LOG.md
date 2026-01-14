@@ -1,4 +1,4 @@
-# Journal des Commandes Exécutées - Phase 1.1
+# Journal des Commandes Exécutées - Phase 1.1 & 1.2
 
 Voici la liste chronologique des commandes exécutées pour l'initialisation du projet.
 
@@ -45,3 +45,18 @@ npm install @tailwindcss/postcss
 npm run build
 ```
 *Note : Succès après configuration correcte de `style.css` et `postcss.config.js`.*
+
+## 6. Backend & Docker
+```bash
+mkdir -p backend/app/api/v1/endpoints backend/app/core backend/app/db backend/app/models backend/app/schemas backend/app/crud
+```
+
+```bash
+docker compose up -d --build
+```
+*Note : Lancement réussi des conteneurs Backend et DB.*
+
+```bash
+curl http://localhost:8000/api/v1/health
+```
+*Note : Test de l'API OK.*
