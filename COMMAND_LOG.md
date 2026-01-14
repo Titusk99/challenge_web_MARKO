@@ -60,3 +60,9 @@ docker compose up -d --build
 curl http://localhost:8000/api/v1/health
 ```
 *Note : Test de l'API OK.*
+
+## 7. Phase 2.1: Top Bar & Navbar
+```bash
+npm install lucide-vue-next
+```
+*Note : Installation de la librairie d'icônes `lucide-vue-next` pour la Navbar.*

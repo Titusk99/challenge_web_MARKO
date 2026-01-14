@@ -18,7 +18,7 @@ Ce document retrace l'avancement du projet MARKO pour l'équipe.
 - [x] Création des composants atomiques (Boutons, Containers)
 
 ## 🧭 Phase 2: Navigation Immersive (À venir)
-- [ ] Top Bar & Navbar
+- [x] Top Bar & Navbar
 - [ ] Mega Menu
 - [ ] Footer
 
