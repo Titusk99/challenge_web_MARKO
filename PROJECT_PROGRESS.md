@@ -20,7 +20,7 @@ Ce document retrace l'avancement du projet MARKO pour l'équipe.
 ## 🧭 Phase 2: Navigation Immersive (À venir)
 - [x] Top Bar & Navbar
 - [x] Mega Menu
-- [ ] Footer
+- [x] Footer
 
 ## 🛍️ Phase 3: Catalogue (À venir)
 - [ ] Page d'accueil
