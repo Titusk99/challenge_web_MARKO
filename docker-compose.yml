@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: marko_backend
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://marko_user:marko_password@db/marko_db
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15-alpine
+    container_name: marko_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=marko_user
+      - POSTGRES_PASSWORD=marko_password
+      - POSTGRES_DB=marko_db
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:

@@ -1,7 +1,7 @@
 # RECONSTRUCTION GUIDE (STEPS.MD) - MARKO "LUXURY RETAIL"
 
 **Concept:** "Luxury Retail" (Inspiration: Hermès, Zalando Premium, Printemps)
-**Stack:** Vue 3 (Composition API) + Vite // FastAPI + PostgreSQL
+**Stack:** Vue 3 (Composition API) + Vite // FastAPI + PostgreSQL // Docker
 
 This operational guide is divided into 5 critical phases. Each task must strictly respect the style guidelines (Design System) and the defined technical architecture.
 
@@ -21,7 +21,7 @@ This operational guide is divided into 5 critical phases. Each task must strictl
 
 
 ### 1.2 Backend Configuration (FastAPI)
-*   **Tech**: FastAPI, SQLAlchemy, Pydantic.
+*   **Tech**: FastAPI, SQLAlchemy, Pydantic, Docker.
 *   **Structure**: MVC Pattern (v1/api/endpoints, models, schemas, crud).
 *   **Database**: PostgreSQL schema for `Users`, `Products`, `Orders`. use db.png for exemple   
 *   **Deliverable**: Functional "Health Check" API and DB connection established.
