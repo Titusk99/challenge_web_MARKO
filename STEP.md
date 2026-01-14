@@ -10,7 +10,7 @@ This operational guide is divided into 5 critical phases. Each task must strictl
 ## 📅 PHASE 1: ARCHITECTURE & DESIGN SYSTEM (FOUNDATIONS)
 *Objective: Set up a solid "Pixel Perfect" foundation ready for atomic development.*
 
-### 1.1 Frontend Configuration
+### 1.1 Frontend Configuration (use tailwindconfig.md)
 *   **Tech**: Vue 3, Vite, Pinia, Vue Router, TailwindCSS.
 *   **Architecture**: Set up the `/src` structure (assets, components/ui, composables, views, stores).
 *   **"Luxury" Design System**:
@@ -19,10 +19,11 @@ This operational guide is divided into 5 critical phases. Each task must strictl
     *   Define global animations: `fade-in`, `slide-up`, `zoom-subtle`.
 *   **Deliverable**: Project that compiles, blank page with the correct font and CSS variables ready.
 
+
 ### 1.2 Backend Configuration (FastAPI)
 *   **Tech**: FastAPI, SQLAlchemy, Pydantic.
 *   **Structure**: MVC Pattern (v1/api/endpoints, models, schemas, crud).
-*   **Database**: PostgreSQL schema for `Users`, `Products`, `Orders`.
+*   **Database**: PostgreSQL schema for `Users`, `Products`, `Orders`. use db.png for exemple   
 *   **Deliverable**: Functional "Health Check" API and DB connection established.
 
 ### 1.3 Basic UI Components (Design System)
