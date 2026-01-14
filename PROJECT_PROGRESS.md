@@ -23,8 +23,8 @@ Ce document retrace l'avancement du projet MARKO pour l'équipe.
 - [x] Footer
 
 ## 🛍️ Phase 3: Catalogue (À venir)
-- [ ] Page d'accueil
-- [ ] Liste des produits & Filtres
+- [x] Page d'accueil
+- [x] Liste des produits & Filtres
 
 ## 💎 Phase 4: Conversion (À venir)
 - [ ] Détail produit
