@@ -15,37 +15,33 @@ const isFilterOpen = ref(false)
 
 const loadProducts = () => {
     const categoryQuery = route.query.category
+    const genderQuery = route.query.gender
     
+    // Clear filters first if navigating to a "fresh" list (optional, but cleaner)
+    productStore.clearFilters()
+
     if (categoryQuery) {
-        // Set the filter in the store so the Sidebar checkbox checks itself
         productStore.setFilter('category', [categoryQuery])
-        // Fetch with this category
-        productStore.fetchProducts({ category: categoryQuery })
-    } else {
-        // Clear filters if no query param (or optional: keep them? Usually new page load = reset)
-        // productStore.clearFilters() // Uncomment if navigation to /products should clear filters
-        // But maybe we just want to fetch all?
-        // Let's rely on store's current state if no query, OR reset if user navigated to "All Products"
-        // For now, let's just fetch all if no query, but not explicitly clear unless needed.
-        // Actually, if I go from ?category=shoes to /products, I expect all products.
-        if (Object.keys(route.query).length === 0) {
-             productStore.clearFilters()
-             productStore.fetchProducts()
-        } else {
-             // If there are other params or mixed state, just fetch
-             productStore.fetchProducts()
-        }
     }
+    
+    if (genderQuery) {
+        productStore.setFilter('gender', genderQuery)
+    }
+
+    productStore.fetchProducts({
+        category: categoryQuery,
+        gender: genderQuery
+    })
 }
 
 onMounted(() => {
     loadProducts()
 })
 
-// Watch for route changes (e.g. valid query param changes)
-watch(() => route.query.category, () => {
+// Watch for any query change
+watch(() => route.query, () => {
     loadProducts()
-})
+}, { deep: true })
 </script>
 
 <template>

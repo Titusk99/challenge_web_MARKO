@@ -67,7 +67,7 @@ onMounted(() => {
       <!-- Desktop Navigation -->
       <div class="hidden lg:flex items-center space-x-8 h-full">
         <RouterLink 
-            to="/category/women" 
+            to="/products?gender=Women" 
             class="text-sm font-medium hover:text-gl-red transition-colors relative group h-full flex items-center"
             @mouseenter="openMenu('women')"
         >
@@ -75,7 +75,7 @@ onMounted(() => {
           <span class="absolute bottom-[26px] left-0 w-0 h-0.5 bg-gl-red transition-all duration-300 group-hover:w-full"></span>
         </RouterLink>
         <RouterLink 
-            to="/category/men" 
+            to="/products?gender=Men" 
             class="text-sm font-medium hover:text-gl-red transition-colors relative group h-full flex items-center"
             @mouseenter="openMenu('men')"
         >
@@ -83,7 +83,7 @@ onMounted(() => {
           <span class="absolute bottom-[26px] left-0 w-0 h-0.5 bg-gl-red transition-all duration-300 group-hover:w-full"></span>
         </RouterLink>
         <RouterLink 
-            to="/category/beauty" 
+            to="/products?gender=Accessories" 
             class="text-sm font-medium hover:text-gl-red transition-colors relative group h-full flex items-center"
             @mouseenter="openMenu('beauty')"
         >

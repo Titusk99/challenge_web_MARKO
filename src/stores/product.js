@@ -128,6 +128,7 @@ export const useProductStore = defineStore('product', () => {
             category: [],
             brand: [],
             colors: [],
+            gender: null,
             minPrice: 0,
             maxPrice: 2000
         }

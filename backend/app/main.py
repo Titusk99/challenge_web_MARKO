@@ -275,6 +275,18 @@ def create_product(
     db.add(db_product)
     db.commit()
     db.refresh(db_product)
+    
+    # Auto-create default variants
+    sizes = ['XS', 'S', 'M', 'L', 'XL']
+    for size in sizes:
+        variant = models.ProductVariant(
+            product_id=db_product.id,
+            size=size,
+            stock_quantity=100 # Default stock
+        )
+        db.add(variant)
+    db.commit()
+    
     return db_product
 
 @app.put("/admin/products/{product_id}", response_model=schemas.ProductResponse)
@@ -296,6 +308,16 @@ def update_product(
     db.refresh(db_product)
     return db_product
 
+@app.delete("/admin/products/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_product(
+    product_id: int, 
+    db: Session = Depends(get_db), 
+    current_user: models.User = Depends(auth.get_current_admin_user)
+):
+    db_product = db.query(models.Product).filter(models.Product.id == product_id).first()
+    if not db_product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
     db.delete(db_product)
     db.commit()
     return None
@@ -311,23 +333,27 @@ from fastapi import FastAPI, Depends, HTTPException, status, Query
 # ... (Previous imports exist, just ensure Query is imported if not already)
 
 @app.get("/products", response_model=List[schemas.ProductResponse])
+@app.get("/products", response_model=List[schemas.ProductResponse])
 def get_public_products(
     category: Optional[List[str]] = Query(None), 
     brand: Optional[List[str]] = Query(None),
     color: Optional[List[str]] = Query(None),
+    gender: Optional[str] = Query(None), # New parameter
     min_price: Optional[Decimal] = None,
     max_price: Optional[Decimal] = None,
     db: Session = Depends(get_db)
 ):
     query = db.query(models.Product).filter(models.Product.is_active == True)
     
+    # Check if we need to join Category
+    if category or gender:
+        query = query.join(models.Category)
+    
     if category:
-        # Join if category filtering is requested
-        # Check if category param is actually a slug or list of names. 
-        # Ideally slug. If list, use IN.
-        # Assuming category logic was "slug" before. Now it might be list.
-        # Let's support list of slugs/names matches.
-        query = query.join(models.Category).filter(models.Category.name.in_(category))
+        query = query.filter(models.Category.name.in_(category))
+        
+    if gender:
+        query = query.filter(models.Category.gender == gender)
         
     if brand:
         query = query.filter(models.Product.brand.in_(brand))

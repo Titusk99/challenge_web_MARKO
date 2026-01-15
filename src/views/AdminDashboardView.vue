@@ -2,6 +2,7 @@
 import { onMounted, ref, reactive, computed, watch } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import { useRouter } from 'vue-router'
+import { Pencil, Trash2 } from 'lucide-vue-next'
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -33,7 +34,7 @@ const colors = ['Black', 'White', 'Beige', 'Blue', 'Green', 'Red', 'Pink', 'Grey
 
 // Computed: Filter categories (types) based on selected Gender
 const availableTypes = computed(() => {
-    return categories.value.filter(c => c.gender === selectedGender.value && c.parent_id !== null)
+    return categories.value.filter(c => c.gender === selectedGender.value)
 })
 
 const fetchProducts = async () => {
@@ -208,9 +209,25 @@ onMounted(async () => {
                                     {{ product.is_active ? 'Active' : 'Inactive' }}
                                 </span>
                             </td>
-                            <td class="p-4 text-right space-x-2">
-                                <button @click="openModal(product)" class="text-sm text-gray-500 hover:text-gl-black">Edit</button>
-                                <button @click="deleteProduct(product.id)" class="text-sm text-red-500 hover:text-red-700">Delete</button>
+                            <td class="p-4 text-right">
+                                <div class="flex items-center justify-end gap-3">
+                                    <button 
+                                        @click="openModal(product)" 
+                                        class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors"
+                                        title="Edit Product"
+                                    >
+                                        <Pencil class="w-3 h-3" />
+                                        <span>Edit</span>
+                                    </button>
+                                    <button 
+                                        @click="deleteProduct(product.id)" 
+                                        class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 rounded-md transition-colors"
+                                        title="Delete Product"
+                                    >
+                                        <Trash2 class="w-3 h-3" />
+                                        <span>Delete</span>
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
