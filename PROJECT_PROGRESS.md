@@ -2,7 +2,7 @@
 
 Ce document retrace l'avancement du projet MARKO pour l'équipe.
 
-## 📅 Phase 1: Architecture & Design System (En cours)
+## 📅 Phase 1: Architecture & Design System
 
 ### 1.1 Configuration Frontend
 - [x] Initialisation du projet Vue 3 + Vite
@@ -17,19 +17,19 @@ Ce document retrace l'avancement du projet MARKO pour l'équipe.
 ### 1.3 Composants UI de base
 - [x] Création des composants atomiques (Boutons, Containers)
 
-## 🧭 Phase 2: Navigation Immersive (À venir)
+## 🧭 Phase 2: Navigation Immersive
 - [x] Top Bar & Navbar
 - [x] Mega Menu
 - [x] Footer
 
-## 🛍️ Phase 3: Catalogue (À venir)
+## 🛍️ Phase 3: Catalogue
 - [x] Page d'accueil
 - [x] Liste des produits & Filtres
 
-## 💎 Phase 4: Conversion (À venir)
-- [ ] Détail produit
-- [ ] Panier
-- [ ] Paiement
+## 💎 Phase 4: Conversion
+- [x] Détail produit
+- [x] Panier
+- [x] Paiement
 
 ## 👤 Phase 5: Espace Client & Admin (À venir)
 - [ ] Authentification

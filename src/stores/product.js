@@ -103,6 +103,8 @@ export const useProductStore = defineStore('product', () => {
         }
     ]
 
+    const currentProduct = ref(null)
+
     // --- Actions ---
     const fetchTrendingProducts = async () => {
         isLoading.value = true
@@ -125,6 +127,24 @@ export const useProductStore = defineStore('product', () => {
         } catch (e) {
             error.value = e
             products.value = mockProducts
+        } finally {
+            isLoading.value = false
+        }
+    }
+
+    const fetchProductById = async (id) => {
+        isLoading.value = true
+        currentProduct.value = null
+        try {
+            await new Promise(resolve => setTimeout(resolve, 400))
+            const product = mockProducts.find(p => p.id === Number(id))
+            if (product) {
+                currentProduct.value = product
+            } else {
+                throw new Error('Product not found')
+            }
+        } catch (e) {
+            error.value = e
         } finally {
             isLoading.value = false
         }
@@ -165,12 +185,14 @@ export const useProductStore = defineStore('product', () => {
     return {
         trendingProducts,
         products,
+        currentProduct,
         filteredProducts,
         isLoading,
         error,
         activeFilters,
         fetchTrendingProducts,
         fetchProducts,
+        fetchProductById,
         setFilter,
         clearFilters
     }

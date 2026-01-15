@@ -3,10 +3,12 @@ import { ref, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import { Search, ShoppingBag, User, Menu } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/auth'
+import { useCartStore } from '@/stores/cart'
 import MegaMenu from './MegaMenu.vue'
 import { navigation } from '@/data/navigation'
 
 const auth = useAuthStore()
+const cartStore = useCartStore()
 const isScrolled = ref(false)
 
 // Mega Menu Logic
@@ -110,10 +112,18 @@ onMounted(() => {
           </span>
         </RouterLink>
 
-        <button class="p-2 hover:bg-black/5 rounded-full transition-all duration-300 hover:scale-105 relative">
+        <button 
+          @click="cartStore.toggleCart()"
+          class="p-2 hover:bg-black/5 rounded-full transition-all duration-300 hover:scale-105 relative"
+        >
           <ShoppingBag class="w-5 h-5 text-gl-dark-gray" />
-          <!-- Cart Badge (example) -->
-          <span class="absolute top-1 right-1 w-2 h-2 bg-gl-red rounded-full ring-2 ring-white"></span>
+          <!-- Cart Badge -->
+          <span 
+            v-if="cartStore.cartCount > 0" 
+            class="absolute top-0 right-0 w-4 h-4 bg-gl-red text-white text-[10px] flex items-center justify-center rounded-full ring-2 ring-white"
+          >
+            {{ cartStore.cartCount }}
+          </span>
         </button>
       </div>
     </div>
