@@ -31,7 +31,12 @@ Ce document retrace l'avancement du projet MARKO pour l'équipe.
 - [x] Panier
 - [x] Paiement
 
-## 👤 Phase 5: Espace Client & Admin (À venir)
-- [ ] Authentification
-- [ ] Dashboard Client
-- [ ] Dashboard Admin
+## 👤 Phase 5: Espace Client & Admin
+- [x] Authentification (Login/Register/JWT)
+- [x] Dashboard Client (Historique des commandes)
+- [x] Dashboard Admin (CRUD Produits, Back-office)
+
+## 🔧 Phase 6: Améliorations & Fixes (Récent)
+- [x] Réparation de la Navigation (Profile/Panier)
+- [x] Page 404 (Not Found)
+- [x] Configuration CORS (Backend)

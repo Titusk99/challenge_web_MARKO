@@ -105,10 +105,26 @@ onMounted(() => {
           <Search class="w-5 h-5 text-gl-dark-gray" />
         </button>
         
-        <RouterLink to="/auth" class="p-2 hover:bg-black/5 rounded-full transition-all duration-300 hover:scale-105 flex items-center gap-2">
+        <RouterLink 
+          v-if="auth.user?.role === 'admin'" 
+          to="/admin" 
+          class="p-2 hover:bg-black/5 rounded-full transition-all duration-300 hover:scale-105 flex items-center gap-2 group mr-2"
+          title="Admin Dashboard"
+        >
+          <div class="relative">
+            <User class="w-5 h-5 text-gl-red" />
+            <span class="absolute -top-1 -right-1 flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-gl-red"></span>
+            </span>
+          </div>
+          <span class="hidden sm:inline text-xs font-medium text-gl-red uppercase tracking-wider">Admin</span>
+        </RouterLink>
+
+        <RouterLink :to="auth.isAuthenticated ? '/account' : '/login'" class="p-2 hover:bg-black/5 rounded-full transition-all duration-300 hover:scale-105 flex items-center gap-2">
           <User class="w-5 h-5 text-gl-dark-gray" />
           <span v-if="auth.isAuthenticated" class="hidden sm:inline text-xs font-medium truncate max-w-[80px]">
-            {{ auth.user?.name }}
+            {{ auth.user?.full_name || 'Account' }}
           </span>
         </RouterLink>
 
