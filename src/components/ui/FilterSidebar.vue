@@ -17,8 +17,15 @@ const emit = defineEmits(['close'])
 const productStore = useProductStore()
 const { activeFilters } = storeToRefs(productStore)
 
-const categories = ['Women', 'Men', 'Accessories', 'Shoes', 'Bags']
-const colors = ['Black', 'White', 'Blue', 'Red', 'Imprimé', 'Brown', 'Grey', 'Gold', 'Beige', 'Multi']
+const categories = [
+  'Women', 'Men', 'Accessories', 'Shoes', 'Bags', 
+  'Clothing', 'Coats & Jackets', 'Dresses', 'Tops & Shirts', 'Pants', 'Knitwear',
+  'Suits & Blazers', 'Trousers', 'Jeans', 'Outerwear',
+  'Skincare', 'Makeup', 'Fragrance', 'Haircare',
+  'Chanel', 'Dior', 'La Mer', 'Aesop',
+  'Wedding', 'Vacation', 'Office'
+]
+const colors = ['Black', 'White', 'Blue', 'Red', 'Imprimé', 'Brown', 'Grey', 'Gold', 'Beige', 'Multi', 'Green', 'Purple', 'Pink', 'Orange']
 
 const updateCategory = (category) => {
   const index = activeFilters.value.category.indexOf(category)

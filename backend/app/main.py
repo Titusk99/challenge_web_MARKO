@@ -25,13 +25,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Dependency
-def get_db():
-    db = database.SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+from .database import get_db
 
 @app.get("/")
 def read_root():
@@ -78,6 +72,68 @@ def read_users_me(current_user: models.User = Depends(auth.get_current_user)):
 def read_users_orders(current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
     orders = db.query(models.Order).filter(models.Order.user_id == current_user.id).all()
     return orders
+
+@app.put("/users/me", response_model=schemas.UserResponse)
+def update_user_me(user_update: schemas.UserUpdate, current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
+    if user_update.email and user_update.email != current_user.email:
+        # Check if email is taken
+        existing_user = db.query(models.User).filter(models.User.email == user_update.email).first()
+        if existing_user:
+            raise HTTPException(status_code=400, detail="Email already registered")
+        current_user.email = user_update.email
+    
+    if user_update.full_name:
+        current_user.full_name = user_update.full_name
+        
+    if user_update.password:
+        current_user.password_hash = auth.get_password_hash(user_update.password)
+        
+    try:
+        db.commit()
+        db.refresh(current_user)
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=f"Update failed: {str(e)}")
+    
+    return current_user
+
+# --- Address Endpoints ---
+
+@app.get("/users/me/addresses", response_model=List[schemas.AddressResponse])
+def read_user_addresses(current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
+    return current_user.addresses
+
+@app.post("/users/me/addresses", response_model=schemas.AddressResponse)
+def create_address(address: schemas.AddressCreate, current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
+    print(f"DEBUG: Creating address {address} for user {current_user.id}")
+    db_address = models.Address(**address.dict(), user_id=current_user.id)
+    db.add(db_address)
+    db.commit()
+    db.refresh(db_address)
+    return db_address
+
+@app.put("/users/me/addresses/{address_id}", response_model=schemas.AddressResponse)
+def update_address(address_id: int, address_update: schemas.AddressCreate, current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
+    db_address = db.query(models.Address).filter(models.Address.id == address_id, models.Address.user_id == current_user.id).first()
+    if not db_address:
+         raise HTTPException(status_code=404, detail="Address not found")
+    
+    for key, value in address_update.dict().items():
+        setattr(db_address, key, value)
+        
+    db.commit()
+    db.refresh(db_address)
+    return db_address
+
+@app.delete("/users/me/addresses/{address_id}")
+def delete_address(address_id: int, current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
+    db_address = db.query(models.Address).filter(models.Address.id == address_id, models.Address.user_id == current_user.id).first()
+    if not db_address:
+         raise HTTPException(status_code=404, detail="Address not found")
+    
+    db.delete(db_address)
+    db.commit()
+    return {"message": "Address deleted"}
 
 ### ADMIN ROUTES ###
 

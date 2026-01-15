@@ -1,18 +1,50 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useRoute } from 'vue-router' // Import useRoute
 import { useProductStore } from '@/stores/product'
 import ProductCard from '@/components/ui/ProductCard.vue'
 import FilterSidebar from '@/components/ui/FilterSidebar.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import { Filter } from 'lucide-vue-next'
 
+const route = useRoute()
 const productStore = useProductStore()
 const { filteredProducts, isLoading, activeFilters } = storeToRefs(productStore)
 const isFilterOpen = ref(false)
 
+const loadProducts = () => {
+    const categoryQuery = route.query.category
+    
+    if (categoryQuery) {
+        // Set the filter in the store so the Sidebar checkbox checks itself
+        productStore.setFilter('category', [categoryQuery])
+        // Fetch with this category
+        productStore.fetchProducts({ category: categoryQuery })
+    } else {
+        // Clear filters if no query param (or optional: keep them? Usually new page load = reset)
+        // productStore.clearFilters() // Uncomment if navigation to /products should clear filters
+        // But maybe we just want to fetch all?
+        // Let's rely on store's current state if no query, OR reset if user navigated to "All Products"
+        // For now, let's just fetch all if no query, but not explicitly clear unless needed.
+        // Actually, if I go from ?category=shoes to /products, I expect all products.
+        if (Object.keys(route.query).length === 0) {
+             productStore.clearFilters()
+             productStore.fetchProducts()
+        } else {
+             // If there are other params or mixed state, just fetch
+             productStore.fetchProducts()
+        }
+    }
+}
+
 onMounted(() => {
-    productStore.fetchProducts()
+    loadProducts()
+})
+
+// Watch for route changes (e.g. valid query param changes)
+watch(() => route.query.category, () => {
+    loadProducts()
 })
 </script>
 

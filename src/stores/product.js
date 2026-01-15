@@ -40,10 +40,22 @@ export const useProductStore = defineStore('product', () => {
         }
     }
 
-    const fetchProducts = async () => {
+    const fetchProducts = async (filters = {}) => {
         isLoading.value = true
         try {
-            const response = await fetch('http://localhost:8000/products')
+            let url = 'http://localhost:8000/products'
+            const params = new URLSearchParams()
+
+            if (filters.category) {
+                params.append('category', filters.category)
+            }
+
+            const queryString = params.toString()
+            if (queryString) {
+                url += `?${queryString}`
+            }
+
+            const response = await fetch(url)
             if (!response.ok) throw new Error('Failed to fetch products')
             const data = await response.json()
 

@@ -84,6 +84,19 @@ CREATE TABLE IF NOT EXISTS public.users
     CONSTRAINT users_email_key UNIQUE (email)
 );
 
+CREATE TABLE IF NOT EXISTS public.addresses
+(
+    id serial NOT NULL,
+    user_id integer,
+    name character varying(255) NOT NULL,
+    street character varying(255) NOT NULL,
+    city character varying(100) NOT NULL,
+    zip_code character varying(20) NOT NULL,
+    country character varying(100) NOT NULL,
+    created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT addresses_pkey PRIMARY KEY (id)
+);
+
 ALTER TABLE IF EXISTS public.categories
     ADD CONSTRAINT categories_parent_id_fkey FOREIGN KEY (parent_id)
     REFERENCES public.categories (id) MATCH SIMPLE
@@ -138,5 +151,11 @@ ALTER TABLE IF EXISTS public.products
     REFERENCES public.categories (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE SET NULL;
+
+ALTER TABLE IF EXISTS public.addresses
+    ADD CONSTRAINT addresses_user_id_fkey FOREIGN KEY (user_id)
+    REFERENCES public.users (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE CASCADE;
 
 END;

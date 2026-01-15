@@ -27,6 +27,30 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
+class UserUpdate(BaseModel):
+    full_name: Optional[str] = None
+    email: Optional[EmailStr] = None
+    password: Optional[str] = None
+
+# --- Address Schemas ---
+class AddressBase(BaseModel):
+    name: str
+    street: str
+    city: str
+    zip_code: str
+    country: str
+
+class AddressCreate(AddressBase):
+    pass
+
+class AddressResponse(AddressBase):
+    id: int
+    user_id: int
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
 # --- Category Schemas ---
 class CategoryBase(BaseModel):
     name: str
@@ -67,7 +91,7 @@ class ProductUpdate(BaseModel):
 class ProductResponse(ProductBase):
     id: int
     created_at: datetime
-    # category: Optional[CategoryResponse] = None # Uncomment if we want nested category response
+    category: Optional[CategoryResponse] = None
 
     class Config:
         from_attributes = True

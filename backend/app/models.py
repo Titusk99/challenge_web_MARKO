@@ -27,6 +27,21 @@ class User(Base):
 
     orders = relationship("Order", back_populates="user")
     favorites = relationship("Favorite", back_populates="user")
+    addresses = relationship("Address", back_populates="user")
+
+class Address(Base):
+    __tablename__ = "addresses"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    name = Column(String, nullable=False) # e.g. "Home", "Office"
+    street = Column(String, nullable=False)
+    city = Column(String, nullable=False)
+    zip_code = Column(String, nullable=False)
+    country = Column(String, nullable=False)
+    created_at = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP"))
+
+    user = relationship("User", back_populates="addresses")
 
 class Favorite(Base):
     __tablename__ = "favorites"
