@@ -58,3 +58,8 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
 @app.get("/users/me", response_model=schemas.UserResponse)
 def read_users_me(current_user: models.User = Depends(auth.get_current_user)):
     return current_user
+
+@app.get("/users/me/orders", response_model=List[schemas.OrderResponse])
+def read_users_orders(current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
+    orders = db.query(models.Order).filter(models.Order.user_id == current_user.id).all()
+    return orders

@@ -37,8 +37,27 @@ const router = createRouter({
             path: '/register',
             name: 'register',
             component: () => import('./views/RegisterView.vue')
+        },
+        {
+            path: '/account',
+            name: 'account',
+            component: () => import('./views/ClientDashboardView.vue'),
+            meta: { requiresAuth: true }
         }
     ]
+})
+
+router.beforeEach((to, from, next) => {
+    const publicPages = ['/', '/login', '/register', '/products', '/checkout'];
+    // Allow navigation to product details (dynamic route)
+    const isPublic = publicPages.includes(to.path) || to.path.startsWith('/product/');
+    const loggedIn = localStorage.getItem('token');
+
+    if (to.meta.requiresAuth && !loggedIn) {
+        return next('/login');
+    }
+
+    next();
 })
 
 app.use(createPinia())
