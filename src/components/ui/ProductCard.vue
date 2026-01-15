@@ -15,7 +15,7 @@ const formatPrice = (price) => {
 </script>
 
 <template>
-  <div class="group cursor-pointer flex-shrink-0 w-72 snap-start">
+  <router-link :to="`/product/${product.id}`" class="group cursor-pointer flex-shrink-0 w-72 snap-start">
     <div class="relative overflow-hidden aspect-[3/4] mb-4 bg-gray-100">
       <img 
         :src="product.image" 
@@ -35,5 +35,5 @@ const formatPrice = (price) => {
       <h3 class="font-serif text-lg leading-tight group-hover:text-gl-red transition-colors duration-300">{{ product.name }}</h3>
       <p class="font-sans font-medium">{{ formatPrice(product.price) }}</p>
     </div>
-  </div>
+  </router-link>
 </template>

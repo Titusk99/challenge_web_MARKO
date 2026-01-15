@@ -2,7 +2,9 @@ version: '3.8'
 
 services:
   backend:
-    build: ./backend
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: marko_backend
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     volumes:
@@ -10,21 +12,26 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgresql://marko_user:marko_password@db/marko_db
+      - DATABASE_URL=${DATABASE_URL}
     depends_on:
       - db
+    env_file:
+      - .env
 
   db:
     image: postgres:15-alpine
     container_name: marko_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
-      - POSTGRES_USER=marko_user
-      - POSTGRES_PASSWORD=marko_password
-      - POSTGRES_DB=marko_db
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     ports:
       - "5432:5432"
+    env_file:
+      - .env
 
 volumes:
   postgres_data:

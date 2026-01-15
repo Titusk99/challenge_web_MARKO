@@ -51,9 +51,9 @@ onMounted(() => {
             <span class="text-gl-red uppercase tracking-widest text-xs font-bold mb-2 block">This Week</span>
             <h2 class="font-serif text-3xl md:text-4xl">Trending Now</h2>
           </div>
-          <a href="#" class="hidden md:block text-sm border-b border-gl-black pb-1 hover:text-gl-red hover:border-gl-red transition-colors">
+          <router-link to="/products" class="hidden md:block text-sm border-b border-gl-black pb-1 hover:text-gl-red hover:border-gl-red transition-colors">
             View All Products
-          </a>
+          </router-link>
         </div>
 
         <!-- Horizontal Slider -->
@@ -85,7 +85,7 @@ onMounted(() => {
         </div>
         
         <div class="mt-8 text-center md:hidden">
-            <a href="#" class="text-sm border-b border-gl-black pb-1">View All Products</a>
+            <router-link to="/products" class="text-sm border-b border-gl-black pb-1">View All Products</router-link>
         </div>
       </div>
     </section>

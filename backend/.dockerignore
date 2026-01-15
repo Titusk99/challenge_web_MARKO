@@ -1,0 +1,29 @@
+# Ignore local environment
+venv/
+env/
+.venv/
+
+# Ignore compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.db
+*.sqlite3
+
+# Ignore git
+.git/
+.gitignore
+
+# Ignore sensitive info and local config
+.env
+.DS_Store
+
+# Ignore IDE files
+.vscode/
+.idea/
+
+# Ignore frontend node_modules (if any in root)
+node_modules/
+dist/
