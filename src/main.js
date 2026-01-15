@@ -8,6 +8,13 @@ const app = createApp(App)
 
 const router = createRouter({
     history: createWebHistory(),
+    scrollBehavior(to, from, savedPosition) {
+        if (savedPosition) {
+            return savedPosition
+        } else {
+            return { top: 0 }
+        }
+    },
     routes: [
         {
             path: '/',
@@ -49,6 +56,11 @@ const router = createRouter({
             name: 'admin',
             component: () => import('./views/AdminDashboardView.vue'),
             meta: { requiresAuth: true, requiresAdmin: true }
+        },
+        {
+            path: '/:pathMatch(.*)*',
+            name: 'not-found',
+            component: () => import('./views/NotFoundView.vue')
         }
     ]
 })
