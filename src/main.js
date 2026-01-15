@@ -43,18 +43,37 @@ const router = createRouter({
             name: 'account',
             component: () => import('./views/ClientDashboardView.vue'),
             meta: { requiresAuth: true }
+        },
+        {
+            path: '/admin',
+            name: 'admin',
+            component: () => import('./views/AdminDashboardView.vue'),
+            meta: { requiresAuth: true, requiresAdmin: true }
         }
     ]
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
     const publicPages = ['/', '/login', '/register', '/products', '/checkout'];
     // Allow navigation to product details (dynamic route)
     const isPublic = publicPages.includes(to.path) || to.path.startsWith('/product/');
-    const loggedIn = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
 
-    if (to.meta.requiresAuth && !loggedIn) {
+    // Simple check for now. Ideally we check expiration or validate with backend if critical.
+    if (to.meta.requiresAuth && !token) {
         return next('/login');
+    }
+
+    if (to.meta.requiresAdmin) {
+        const userStr = localStorage.getItem('user');
+        if (userStr) {
+            const user = JSON.parse(userStr);
+            if (user.role !== 'admin') {
+                return next('/'); // Or 403 page
+            }
+        } else {
+            return next('/login');
+        }
     }
 
     next();

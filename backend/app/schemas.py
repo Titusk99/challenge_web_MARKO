@@ -34,6 +34,17 @@ class ProductBase(BaseModel):
     image_url: Optional[str] = None
     is_active: bool = True
 
+class ProductCreate(ProductBase):
+    pass
+
+class ProductUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    price: Optional[Decimal] = None
+    category: Optional[str] = None
+    image_url: Optional[str] = None
+    is_active: Optional[bool] = None
+
 class ProductResponse(ProductBase):
     id: int
     created_at: datetime
