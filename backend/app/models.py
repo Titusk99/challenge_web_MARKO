@@ -61,6 +61,8 @@ class Product(Base):
     description = Column(String)
     price = Column(DECIMAL(10, 2), nullable=False)
     category_id = Column(Integer, ForeignKey("categories.id"))
+    brand = Column(String, nullable=True) # New field
+    color = Column(String, nullable=True) # New field
     image_url = Column(String)
     is_active = Column(Boolean, default=True)
     created_at = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP"))
@@ -105,3 +107,11 @@ class OrderItem(Base):
 
     order = relationship("Order", back_populates="items")
     variant = relationship("ProductVariant", back_populates="order_items")
+
+    @property
+    def product_name(self):
+        return self.variant.product.name if self.variant and self.variant.product else "Unknown Product"
+
+    @property
+    def product_image(self):
+        return self.variant.product.image_url if self.variant and self.variant.product else None

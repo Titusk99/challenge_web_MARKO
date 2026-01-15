@@ -66,6 +66,8 @@ CREATE TABLE IF NOT EXISTS public.products
     description text COLLATE pg_catalog."default",
     price numeric(10, 2) NOT NULL,
     category_id integer,
+    brand character varying(100) COLLATE pg_catalog."default",
+    color character varying(50) COLLATE pg_catalog."default",
     image_url text COLLATE pg_catalog."default",
     is_active boolean DEFAULT true,
     created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,

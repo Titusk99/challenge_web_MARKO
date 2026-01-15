@@ -128,19 +128,19 @@ onMounted(() => {
           </span>
         </RouterLink>
 
-        <button 
-          @click="cartStore.toggleCart()"
+        <RouterLink 
+          to="/cart"
           class="p-2 hover:bg-black/5 rounded-full transition-all duration-300 hover:scale-105 relative"
         >
           <ShoppingBag class="w-5 h-5 text-gl-dark-gray" />
-          <!-- Cart Badge -->
+          <!-- Cart Badge: Ideally updated from backend in future steps -->
           <span 
             v-if="cartStore.cartCount > 0" 
             class="absolute top-0 right-0 w-4 h-4 bg-gl-red text-white text-[10px] flex items-center justify-center rounded-full ring-2 ring-white"
           >
             {{ cartStore.cartCount }}
           </span>
-        </button>
+        </RouterLink>
       </div>
     </div>
 

@@ -3,7 +3,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from datetime import timedelta
-from typing import List
+from typing import List, Optional
+from decimal import Decimal
 
 from . import models, schemas, auth, database
 
@@ -135,6 +136,124 @@ def delete_address(address_id: int, current_user: models.User = Depends(auth.get
     db.commit()
     return {"message": "Address deleted"}
 
+# --- Cart Endpoints ---
+
+@app.get("/cart", response_model=schemas.OrderResponse)
+def get_cart(current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
+    # Find pending order
+    cart = db.query(models.Order).filter(
+        models.Order.user_id == current_user.id,
+        models.Order.status == "pending"
+    ).first()
+    
+    if not cart:
+        # Create new cart
+        cart = models.Order(
+            user_id=current_user.id,
+            total_amount=0,
+            status="pending",
+            shipping_address="TBD" # Placeholder
+        )
+        db.add(cart)
+        db.commit()
+        db.refresh(cart)
+    
+    return cart
+
+@app.post("/cart/items", response_model=schemas.OrderResponse)
+def add_to_cart(
+    item: schemas.CartItemAdd, 
+    current_user: models.User = Depends(auth.get_current_user), 
+    db: Session = Depends(get_db)
+):
+    # Get or Create Cart
+    cart = db.query(models.Order).filter(
+        models.Order.user_id == current_user.id,
+        models.Order.status == "pending"
+    ).first()
+    
+    if not cart:
+        cart = models.Order(user_id=current_user.id, total_amount=0, status="pending", shipping_address="TBD")
+        db.add(cart)
+        db.commit()
+        db.refresh(cart)
+        
+    # Get Product Variant (and Price)
+    # Using Variant ID. If simpler product (no variants yet used in frontend), we might need to adjust.
+    # Assuming frontend sends valid ID. Ideally we check Product table if Variant table usage is complex.
+    # For now, let's assume ProductVariant exists? Or map Product ID to Variant?
+    # Wait, existing data structure uses ProductVariant.
+    # If the user's frontend is "Simple", they might be sending ProductID.
+    # If ProductVariant is used, we need to price it.
+    
+    # Check if variant exists
+    variant = db.query(models.ProductVariant).filter(models.ProductVariant.id == item.product_variant_id).first()
+    if not variant:
+         raise HTTPException(status_code=404, detail="Product variant not found")
+         
+    # Get Product price (assuming price is on Product, not Variant, based on models.py)
+    product = variant.product
+    price = product.price # Decimal
+    
+    # Check if item exists in cart
+    existing_item = db.query(models.OrderItem).filter(
+        models.OrderItem.order_id == cart.id,
+        models.OrderItem.product_variant_id == item.product_variant_id
+    ).first()
+    
+    if existing_item:
+        existing_item.quantity += item.quantity
+    else:
+        new_item = models.OrderItem(
+            order_id=cart.id,
+            product_variant_id=item.product_variant_id,
+            quantity=item.quantity,
+            unit_price=price
+        )
+        db.add(new_item)
+    
+    # Update Total
+    # Recalculate full total to be safe
+    db.commit() # Save items first
+    db.refresh(cart)
+    
+    # Calculate total
+    total = sum(i.quantity * i.unit_price for i in cart.items)
+    cart.total_amount = total
+    db.commit()
+    db.refresh(cart)
+    
+    return cart
+
+@app.delete("/cart/items/{item_id}", response_model=schemas.OrderResponse)
+def remove_form_cart(
+    item_id: int, 
+    current_user: models.User = Depends(auth.get_current_user), 
+    db: Session = Depends(get_db)
+):
+    # Get list, check ownership
+    cart_item = db.query(models.OrderItem).join(models.Order).filter(
+        models.OrderItem.id == item_id,
+        models.Order.user_id == current_user.id,
+        models.Order.status == "pending"
+    ).first()
+    
+    if not cart_item:
+        raise HTTPException(status_code=404, detail="Item not found")
+    
+    cart = cart_item.order
+    db.delete(cart_item)
+    db.commit()
+    
+    # Update Total
+    db.refresh(cart)
+    total = sum(i.quantity * i.unit_price for i in cart.items)
+    cart.total_amount = total
+    db.commit()
+    db.refresh(cart)
+    
+    return cart
+
 ### ADMIN ROUTES ###
 
 @app.get("/admin/products", response_model=List[schemas.ProductResponse])
@@ -183,11 +302,45 @@ def update_product(
 
 ### PUBLIC PRODUCT ROUTES ###
 
+@app.get("/categories", response_model=List[schemas.CategoryResponse])
+def get_categories(db: Session = Depends(get_db)):
+    return db.query(models.Category).all()
+
+from fastapi import FastAPI, Depends, HTTPException, status, Query
+
+# ... (Previous imports exist, just ensure Query is imported if not already)
+
 @app.get("/products", response_model=List[schemas.ProductResponse])
-def get_public_products(category: str = None, db: Session = Depends(get_db)):
+def get_public_products(
+    category: Optional[List[str]] = Query(None), 
+    brand: Optional[List[str]] = Query(None),
+    color: Optional[List[str]] = Query(None),
+    min_price: Optional[Decimal] = None,
+    max_price: Optional[Decimal] = None,
+    db: Session = Depends(get_db)
+):
     query = db.query(models.Product).filter(models.Product.is_active == True)
+    
     if category:
-        query = query.join(models.Category).filter(models.Category.slug == category)
+        # Join if category filtering is requested
+        # Check if category param is actually a slug or list of names. 
+        # Ideally slug. If list, use IN.
+        # Assuming category logic was "slug" before. Now it might be list.
+        # Let's support list of slugs/names matches.
+        query = query.join(models.Category).filter(models.Category.name.in_(category))
+        
+    if brand:
+        query = query.filter(models.Product.brand.in_(brand))
+        
+    if color:
+        query = query.filter(models.Product.color.in_(color))
+        
+    if min_price is not None:
+        query = query.filter(models.Product.price >= min_price)
+        
+    if max_price is not None:
+         query = query.filter(models.Product.price <= max_price)
+         
     return query.all()
 
 @app.get("/products/{product_id}", response_model=schemas.ProductResponse)

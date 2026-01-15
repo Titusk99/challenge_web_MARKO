@@ -74,6 +74,8 @@ class ProductBase(BaseModel):
     description: Optional[str] = None
     price: Decimal
     category_id: Optional[int] = None
+    brand: Optional[str] = None
+    color: Optional[str] = None
     image_url: Optional[str] = None
     is_active: bool = True
 
@@ -85,6 +87,8 @@ class ProductUpdate(BaseModel):
     description: Optional[str] = None
     price: Optional[Decimal] = None
     category_id: Optional[int] = None
+    brand: Optional[str] = None
+    color: Optional[str] = None
     image_url: Optional[str] = None
     is_active: Optional[bool] = None
 
@@ -92,6 +96,7 @@ class ProductResponse(ProductBase):
     id: int
     created_at: datetime
     category: Optional[CategoryResponse] = None
+    variants: List['ProductVariantResponse'] = []
 
     class Config:
         from_attributes = True
@@ -117,8 +122,14 @@ class OrderItemBase(BaseModel):
     quantity: int
     unit_price: Decimal
 
+class CartItemAdd(BaseModel):
+    product_variant_id: int
+    quantity: int = 1
+
 class OrderItemResponse(OrderItemBase):
     id: int
+    product_name: str
+    product_image: Optional[str] = None
     # variant: Optional[ProductVariantResponse] = None # Include variant details if needed
 
     class Config:
