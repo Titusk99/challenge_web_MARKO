@@ -121,16 +121,23 @@ def update_product(
     db.refresh(db_product)
     return db_product
 
-@app.delete("/admin/products/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_product(
-    product_id: int, 
-    db: Session = Depends(get_db), 
-    current_user: models.User = Depends(auth.get_current_admin_user)
-):
-    db_product = db.query(models.Product).filter(models.Product.id == product_id).first()
-    if not db_product:
-        raise HTTPException(status_code=404, detail="Product not found")
-    
     db.delete(db_product)
     db.commit()
     return None
+
+### PUBLIC PRODUCT ROUTES ###
+
+@app.get("/products", response_model=List[schemas.ProductResponse])
+def get_public_products(category: str = None, db: Session = Depends(get_db)):
+    query = db.query(models.Product).filter(models.Product.is_active == True)
+    if category:
+        query = query.join(models.Category).filter(models.Category.slug == category)
+    return query.all()
+
+@app.get("/products/{product_id}", response_model=schemas.ProductResponse)
+def get_public_product(product_id: int, db: Session = Depends(get_db)):
+    product = db.query(models.Product).filter(models.Product.id == product_id, models.Product.is_active == True).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    return product
+
