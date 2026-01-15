@@ -1,19 +1,47 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useRoute } from 'vue-router' // Import useRoute
 import { useProductStore } from '@/stores/product'
 import ProductCard from '@/components/ui/ProductCard.vue'
 import FilterSidebar from '@/components/ui/FilterSidebar.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import { Filter } from 'lucide-vue-next'
 
+const route = useRoute()
 const productStore = useProductStore()
 const { filteredProducts, isLoading, activeFilters } = storeToRefs(productStore)
 const isFilterOpen = ref(false)
 
+const loadProducts = () => {
+    const categoryQuery = route.query.category
+    const genderQuery = route.query.gender
+    
+    // Clear filters first if navigating to a "fresh" list (optional, but cleaner)
+    productStore.clearFilters()
+
+    if (categoryQuery) {
+        productStore.setFilter('category', [categoryQuery])
+    }
+    
+    if (genderQuery) {
+        productStore.setFilter('gender', genderQuery)
+    }
+
+    productStore.fetchProducts({
+        category: categoryQuery,
+        gender: genderQuery
+    })
+}
+
 onMounted(() => {
-    productStore.fetchProducts()
+    loadProducts()
 })
+
+// Watch for any query change
+watch(() => route.query, () => {
+    loadProducts()
+}, { deep: true })
 </script>
 
 <template>

@@ -67,7 +67,7 @@ onMounted(() => {
       <!-- Desktop Navigation -->
       <div class="hidden lg:flex items-center space-x-8 h-full">
         <RouterLink 
-            to="/category/women" 
+            to="/products?gender=Women" 
             class="text-sm font-medium hover:text-gl-red transition-colors relative group h-full flex items-center"
             @mouseenter="openMenu('women')"
         >
@@ -75,7 +75,7 @@ onMounted(() => {
           <span class="absolute bottom-[26px] left-0 w-0 h-0.5 bg-gl-red transition-all duration-300 group-hover:w-full"></span>
         </RouterLink>
         <RouterLink 
-            to="/category/men" 
+            to="/products?gender=Men" 
             class="text-sm font-medium hover:text-gl-red transition-colors relative group h-full flex items-center"
             @mouseenter="openMenu('men')"
         >
@@ -83,7 +83,7 @@ onMounted(() => {
           <span class="absolute bottom-[26px] left-0 w-0 h-0.5 bg-gl-red transition-all duration-300 group-hover:w-full"></span>
         </RouterLink>
         <RouterLink 
-            to="/category/beauty" 
+            to="/products?gender=Accessories" 
             class="text-sm font-medium hover:text-gl-red transition-colors relative group h-full flex items-center"
             @mouseenter="openMenu('beauty')"
         >
@@ -128,19 +128,19 @@ onMounted(() => {
           </span>
         </RouterLink>
 
-        <button 
-          @click="cartStore.toggleCart()"
+        <RouterLink 
+          to="/cart"
           class="p-2 hover:bg-black/5 rounded-full transition-all duration-300 hover:scale-105 relative"
         >
           <ShoppingBag class="w-5 h-5 text-gl-dark-gray" />
-          <!-- Cart Badge -->
+          <!-- Cart Badge: Ideally updated from backend in future steps -->
           <span 
             v-if="cartStore.cartCount > 0" 
             class="absolute top-0 right-0 w-4 h-4 bg-gl-red text-white text-[10px] flex items-center justify-center rounded-full ring-2 ring-white"
           >
             {{ cartStore.cartCount }}
           </span>
-        </button>
+        </RouterLink>
       </div>
     </div>
 

@@ -21,6 +21,11 @@ const router = createRouter({
             component: () => import('./views/HomeView.vue'),
         },
         {
+            path: '/category/:gender/:slug',
+            name: 'category-detail',
+            component: () => import('./views/ProductListView.vue'), // Reuse ProductListView
+        },
+        {
             path: '/products',
             name: 'products',
             component: () => import('./views/ProductListView.vue'), // Products Page
@@ -29,6 +34,12 @@ const router = createRouter({
             path: '/product/:id',
             name: 'product-detail',
             component: () => import('./views/ProductDetail.vue')
+        },
+        {
+            path: '/cart',
+            name: 'cart',
+            component: () => import('./views/CartView.vue'),
+            meta: { requiresAuth: true }
         },
         {
             path: '/checkout',
@@ -67,8 +78,8 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
     const publicPages = ['/', '/login', '/register', '/products', '/checkout'];
-    // Allow navigation to product details (dynamic route)
-    const isPublic = publicPages.includes(to.path) || to.path.startsWith('/product/');
+    // Allow navigation to product details and categories (dynamic routes)
+    const isPublic = publicPages.includes(to.path) || to.path.startsWith('/product/') || to.path.startsWith('/category/');
     const token = localStorage.getItem('token');
 
     // Simple check for now. Ideally we check expiration or validate with backend if critical.

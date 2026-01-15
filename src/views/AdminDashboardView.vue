@@ -1,45 +1,59 @@
 <script setup>
-import { onMounted, ref, reactive } from 'vue'
+import { onMounted, ref, reactive, computed, watch } from 'vue'
 import { useAuthStore } from '../stores/auth'
-import { useToastStore } from '../stores/toast' // Assuming this exists or I should mock it/use alert
 import { useRouter } from 'vue-router'
+import { Pencil, Trash2 } from 'lucide-vue-next'
 
 const authStore = useAuthStore()
 const router = useRouter()
-// Mock toast if not available, but planned to use it.
-const toastStore = { addToast: (msg, type) => console.log(msg, type) } 
 
 const products = ref([])
+const categories = ref([])
 const loading = ref(true)
 const isModalOpen = ref(false)
 const isEditing = ref(false)
+
 const currentProduct = reactive({
     id: null,
     name: '',
     description: '',
     price: 0,
-    category: '',
+    category_id: null,
+    brand: '',
+    color: '',
     image_url: '',
     is_active: true
 })
 
+// Temporary selection state for UI before mapping to category_id
+const selectedGender = ref('Women')
+
+// Static options based on requirements/navigation
+const brands = ['Chanel', 'Dior', 'La Mer', 'Aesop', 'Gucci', 'Prada', 'Nike', 'Zara']
+const colors = ['Black', 'White', 'Beige', 'Blue', 'Green', 'Red', 'Pink', 'Grey', 'Brown', 'Multi']
+
+// Computed: Filter categories (types) based on selected Gender
+const availableTypes = computed(() => {
+    return categories.value.filter(c => c.gender === selectedGender.value)
+})
+
 const fetchProducts = async () => {
-    loading.value = true
     try {
         const response = await fetch('http://localhost:8000/admin/products', {
-            headers: {
-                'Authorization': `Bearer ${authStore.token}`
-            }
+            headers: { 'Authorization': `Bearer ${authStore.token}` }
         })
-        if (response.ok) {
-            products.value = await response.json()
-        } else {
-            console.error('Failed to fetch products')
-        }
+        if (response.ok) products.value = await response.json()
     } catch (error) {
         console.error('Error fetching products:', error)
-    } finally {
-        loading.value = false
+    }
+}
+
+const fetchCategories = async () => {
+    try {
+        const response = await fetch('http://localhost:8000/categories')
+        if (response.ok) categories.value = await response.json()
+    } catch (error) {
+        console.error('Error fetching categories:', error)
     }
 }
 
@@ -47,6 +61,12 @@ const openModal = (product = null) => {
     if (product) {
         isEditing.value = true
         Object.assign(currentProduct, product)
+        
+        // Find existing category to set gender correctly
+        const existingCat = categories.value.find(c => c.id === product.category_id)
+        if (existingCat) {
+            selectedGender.value = existingCat.gender
+        }
     } else {
         isEditing.value = false
         Object.assign(currentProduct, {
@@ -54,10 +74,13 @@ const openModal = (product = null) => {
             name: '',
             description: '',
             price: 0,
-            category: '',
+            category_id: null,
+            brand: '',
+            color: '',
             image_url: '',
             is_active: true
         })
+        selectedGender.value = 'Women' // Default
     }
     isModalOpen.value = true
 }
@@ -74,19 +97,24 @@ const saveProduct = async () => {
         
         const method = isEditing.value ? 'PUT' : 'POST'
         
+        // Ensure price is number
+        const payload = {
+            ...currentProduct,
+            price: Number(currentProduct.price)
+        }
+        
         const response = await fetch(url, {
             method: method,
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${authStore.token}`
             },
-            body: JSON.stringify(currentProduct)
+            body: JSON.stringify(payload)
         })
 
         if (response.ok) {
             await fetchProducts()
             closeModal()
-            // toastStore.addToast('Product saved successfully', 'success')
         } else {
             const data = await response.json()
             alert(data.detail || 'Failed to save product')
@@ -98,44 +126,35 @@ const saveProduct = async () => {
 
 const deleteProduct = async (id) => {
     if (!confirm('Are you sure you want to delete this product?')) return
-
     try {
         const response = await fetch(`http://localhost:8000/admin/products/${id}`, {
             method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${authStore.token}`
-            }
+            headers: { 'Authorization': `Bearer ${authStore.token}` }
         })
-
-        if (response.ok) {
-            products.value = products.value.filter(p => p.id !== id)
-        } else {
-            alert('Failed to delete product')
-        }
+        if (response.ok) products.value = products.value.filter(p => p.id !== id)
     } catch (error) {
         console.error('Error deleting product:', error)
     }
 }
 
 const formatPrice = (price) => {
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD'
-    }).format(price)
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(price)
 }
 
-onMounted(() => {
+onMounted(async () => {
     if (!authStore.isAuthenticated || authStore.user?.role !== 'admin') {
         router.push('/login')
         return
     }
-    fetchProducts()
+    loading.value = true
+    await Promise.all([fetchProducts(), fetchCategories()])
+    loading.value = false
 })
 </script>
 
 <template>
     <div class="min-h-screen pl-64 bg-gray-50">
-        <!-- Sidebar (Visual Mockup for Admin) -->
+        <!-- Sidebar -->
         <div class="fixed inset-y-0 left-0 w-64 bg-gl-black text-white p-6">
             <div class="font-serif text-2xl mb-12">MARKO Admin</div>
             <nav class="space-y-4">
@@ -153,10 +172,7 @@ onMounted(() => {
         <div class="p-12">
             <div class="flex justify-between items-center mb-8">
                 <h1 class="font-serif text-3xl">Product Management</h1>
-                <button 
-                    @click="openModal()"
-                    class="bg-gl-black text-white px-6 py-2 hover:bg-gl-red transition-colors duration-300 uppercase tracking-widest text-xs"
-                >
+                <button @click="openModal()" class="bg-gl-black text-white px-6 py-2 hover:bg-gl-red transition-colors duration-300 uppercase tracking-widest text-xs">
                     Add Product
                 </button>
             </div>
@@ -166,7 +182,9 @@ onMounted(() => {
                     <thead class="bg-gray-100 text-xs uppercase tracking-wider text-gray-500">
                         <tr>
                             <th class="p-4 font-medium">Product</th>
-                            <th class="p-4 font-medium">Category</th>
+                            <th class="p-4 font-medium">Brand</th>
+                            <th class="p-4 font-medium">Type</th>
+                            <th class="p-4 font-medium">Color</th>
                             <th class="p-4 font-medium">Price</th>
                             <th class="p-4 font-medium">Status</th>
                             <th class="p-4 font-medium text-right">Actions</th>
@@ -182,23 +200,35 @@ onMounted(() => {
                                     <span class="font-medium">{{ product.name }}</span>
                                 </div>
                             </td>
-                            <td class="p-4 text-sm text-gray-600">{{ product.category }}</td>
+                            <td class="p-4 text-sm text-gray-600">{{ product.brand || '-' }}</td>
+                            <td class="p-4 text-sm text-gray-600">{{ categories.find(c => c.id === product.category_id)?.name || '-' }}</td>
+                            <td class="p-4 text-sm text-gray-600">{{ product.color || '-' }}</td>
                             <td class="p-4 font-serif">{{ formatPrice(product.price) }}</td>
                             <td class="p-4">
                                 <span :class="['px-2 py-0.5 text-xs rounded-full', product.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800']">
                                     {{ product.is_active ? 'Active' : 'Inactive' }}
                                 </span>
                             </td>
-                            <td class="p-4 text-right space-x-2">
-                                <button @click="openModal(product)" class="text-sm text-gray-500 hover:text-gl-black">Edit</button>
-                                <button @click="deleteProduct(product.id)" class="text-sm text-red-500 hover:text-red-700">Delete</button>
+                            <td class="p-4 text-right">
+                                <div class="flex items-center justify-end gap-3">
+                                    <button 
+                                        @click="openModal(product)" 
+                                        class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors"
+                                        title="Edit Product"
+                                    >
+                                        <Pencil class="w-3 h-3" />
+                                        <span>Edit</span>
+                                    </button>
+                                    <button 
+                                        @click="deleteProduct(product.id)" 
+                                        class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 rounded-md transition-colors"
+                                        title="Delete Product"
+                                    >
+                                        <Trash2 class="w-3 h-3" />
+                                        <span>Delete</span>
+                                    </button>
+                                </div>
                             </td>
-                        </tr>
-                        <tr v-if="loading" class="text-center text-gray-500">
-                            <td colspan="5" class="p-8">Loading products...</td>
-                        </tr>
-                        <tr v-else-if="products.length === 0" class="text-center text-gray-500">
-                            <td colspan="5" class="p-8">No products found.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -207,28 +237,56 @@ onMounted(() => {
 
         <!-- Modal -->
         <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gl-black-glass backdrop-blur-sm">
-            <div class="bg-white w-full max-w-lg p-8 shadow-2xl animate-fade-in relative">
+            <div class="bg-white w-full max-w-lg p-8 shadow-2xl animate-fade-in relative max-h-[90vh] overflow-y-auto">
                 <button @click="closeModal" class="absolute top-4 right-4 text-gray-400 hover:text-black">✕</button>
                 <h2 class="font-serif text-2xl mb-6">{{ isEditing ? 'Edit Product' : 'New Product' }}</h2>
                 
                 <form @submit.prevent="saveProduct" class="space-y-4">
                     <div>
-                        <label class="block text-xs uppercase tracking-wider text-gray-500 mb-1">Name</label>
+                        <label class="block text-xs uppercase tracking-wider text-gray-500 mb-1">Product Name</label>
                         <input v-model="currentProduct.name" type="text" class="w-full border-b border-gray-300 py-2 focus:border-gl-black outline-none transition-colors" required />
                     </div>
+
+                    <!-- New Selectors -->
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs uppercase tracking-wider text-gray-500 mb-1">Price</label>
-                            <input v-model.number="currentProduct.price" type="number" step="0.01" class="w-full border-b border-gray-300 py-2 focus:border-gl-black outline-none transition-colors" required />
-                        </div>
-                        <div>
-                            <label class="block text-xs uppercase tracking-wider text-gray-500 mb-1">Category</label>
-                            <select v-model="currentProduct.category" class="w-full border-b border-gray-300 py-2 focus:border-gl-black outline-none transition-colors">
+                            <label class="block text-xs uppercase tracking-wider text-gray-500 mb-1">Gender</label>
+                            <select v-model="selectedGender" class="w-full border-b border-gray-300 py-2 focus:border-gl-black outline-none">
                                 <option value="Women">Women</option>
                                 <option value="Men">Men</option>
                                 <option value="Accessories">Accessories</option>
                             </select>
                         </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-gray-500 mb-1">Type (Category)</label>
+                            <select v-model="currentProduct.category_id" class="w-full border-b border-gray-300 py-2 focus:border-gl-black outline-none" required>
+                                <option v-for="cat in availableTypes" :key="cat.id" :value="cat.id">
+                                    {{ cat.name }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-gray-500 mb-1">Brand</label>
+                            <select v-model="currentProduct.brand" class="w-full border-b border-gray-300 py-2 focus:border-gl-black outline-none">
+                                <option value="">Select Brand...</option>
+                                <option v-for="brand in brands" :key="brand" :value="brand">{{ brand }}</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-gray-500 mb-1">Color</label>
+                            <select v-model="currentProduct.color" class="w-full border-b border-gray-300 py-2 focus:border-gl-black outline-none">
+                                <option value="">Select Color...</option>
+                                <option v-for="color in colors" :key="color" :value="color">{{ color }}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-gray-500 mb-1">Price</label>
+                        <input v-model.number="currentProduct.price" type="number" step="0.01" class="w-full border-b border-gray-300 py-2 focus:border-gl-black outline-none transition-colors" required />
                     </div>
                      <div>
                         <label class="block text-xs uppercase tracking-wider text-gray-500 mb-1">Image URL</label>

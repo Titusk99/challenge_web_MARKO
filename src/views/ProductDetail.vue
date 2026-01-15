@@ -69,7 +69,7 @@ const toggleFavorite = () => {
           <div class="mb-8">
             <h2 class="text-sm tracking-widest text-gray-500 uppercase mb-2">{{ currentProduct.category }}</h2>
             <h1 class="text-4xl md:text-5xl font-serif text-gl-black mb-4">{{ currentProduct.name }}</h1>
-            <p class="text-2xl font-medium text-gl-black">${{ currentProduct.price.toFixed(2) }}</p>
+            <p class="text-2xl font-medium text-gl-black">${{ Number(currentProduct.price).toFixed(2) }}</p>
           </div>
 
           <div class="prose prose-sm text-gray-600 mb-8">
