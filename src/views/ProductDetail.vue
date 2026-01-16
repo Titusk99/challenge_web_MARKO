@@ -1,16 +1,20 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useProductStore } from '@/stores/product'
 import { useCartStore } from '@/stores/cart'
+import { useAuthStore } from '@/stores/auth'
+import { API_URL } from '@/config'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import SizeGuideModal from '@/components/ui/SizeGuideModal.vue'
 import { Heart, Share2, Truck, RefreshCw, ShieldCheck } from 'lucide-vue-next'
 
 const route = useRoute()
+const router = useRouter()
 const productStore = useProductStore()
 const cartStore = useCartStore()
+const authStore = useAuthStore()
 const { currentProduct, isLoading, error } = storeToRefs(productStore)
 
 const selectedSize = ref(null)
@@ -18,8 +22,26 @@ const isSizeGuideOpen = ref(false)
 
 const sizes = ['XS', 'S', 'M', 'L', 'XL']
 
-onMounted(() => {
-  productStore.fetchProductById(route.params.id)
+const isFavorite = ref(false)
+
+const checkFavoriteStatus = async () => {
+    if (!authStore.isAuthenticated) return
+    try {
+        const response = await fetch(`${API_URL}/users/me/favorites`, {
+             headers: { 'Authorization': `Bearer ${authStore.token}` }
+        })
+        if (response.ok) {
+            const favs = await response.json()
+            isFavorite.value = favs.some(p => p.id === Number(route.params.id))
+        }
+    } catch (e) {
+        console.error('Error checking favorites:', e)
+    }
+}
+
+onMounted(async () => {
+  await productStore.fetchProductById(route.params.id)
+  checkFavoriteStatus()
 })
 
 const addToCart = () => {
@@ -28,9 +50,31 @@ const addToCart = () => {
   }
 }
 
-const toggleFavorite = () => {
-  // TODO: Implement favorites
-  console.log('Toggle favorite')
+const toggleFavorite = async () => {
+  if (!authStore.isAuthenticated) {
+      router.push('/login')
+      return
+  }
+  
+  try {
+      if (isFavorite.value) {
+          // Remove
+          await fetch(`${API_URL}/users/me/favorites/${currentProduct.value.id}`, {
+              method: 'DELETE',
+              headers: { 'Authorization': `Bearer ${authStore.token}` }
+          })
+          isFavorite.value = false
+      } else {
+          // Add
+          await fetch(`${API_URL}/users/me/favorites/${currentProduct.value.id}`, {
+              method: 'POST',
+              headers: { 'Authorization': `Bearer ${authStore.token}` }
+          })
+          isFavorite.value = true
+      }
+  } catch (e) {
+      console.error('Error toggling favorite:', e)
+  }
 }
 </script>
 
@@ -67,16 +111,14 @@ const toggleFavorite = () => {
         <!-- Right: Product Info -->
         <div class="relative pt-4">
           <div class="mb-8">
-            <h2 class="text-sm tracking-widest text-gray-500 uppercase mb-2">{{ currentProduct.category }}</h2>
+            <h2 class="text-sm tracking-widest text-gray-500 uppercase mb-2">{{ currentProduct.category?.name }}</h2>
             <h1 class="text-4xl md:text-5xl font-serif text-gl-black mb-4">{{ currentProduct.name }}</h1>
             <p class="text-2xl font-medium text-gl-black">${{ Number(currentProduct.price).toFixed(2) }}</p>
           </div>
 
           <div class="prose prose-sm text-gray-600 mb-8">
             <p>
-              Experience luxury with this meticulously crafted piece. 
-              Designed for the modern individual who values both style and comfort.
-              Made from premium materials to ensure lasting quality.
+              {{ currentProduct.description }}
             </p>
           </div>
 
@@ -121,7 +163,7 @@ const toggleFavorite = () => {
               @click="toggleFavorite"
               class="w-14 h-14 flex items-center justify-center border border-gray-200 rounded-sm hover:border-gl-black transition-colors"
             >
-              <Heart class="w-6 h-6" />
+              <Heart class="w-6 h-6 transition-colors" :class="{ 'fill-gl-black text-gl-black': isFavorite }" />
             </button>
           </div>
 

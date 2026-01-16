@@ -3,15 +3,17 @@ import { onMounted, ref, reactive } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import { useRouter } from 'vue-router'
 import BaseButton from '@/components/ui/BaseButton.vue'
-import { Trash2, Plus, MapPin, User, Package } from 'lucide-vue-next'
+import { Trash2, Plus, MapPin, User, Package, Heart } from 'lucide-vue-next'
 import { API_URL } from '@/config'
+import ProductCard from '@/components/ui/ProductCard.vue'
 
 const authStore = useAuthStore()
 const router = useRouter()
 const orders = ref([])
 const addresses = ref([])
+const favorites = ref([])
 const loading = ref(true)
-const activeTab = ref('orders') // 'orders', 'addresses', 'details'
+const activeTab = ref('orders') // 'orders', 'addresses', 'details', 'favorites'
 
 // Forms
 const showAddAddress = ref(false)
@@ -60,6 +62,17 @@ const fetchAddresses = async () => {
         if (response.ok) addresses.value = await response.json()
     } catch (error) {
         console.error('Error fetching addresses:', error)
+    }
+}
+
+const fetchFavorites = async () => {
+    try {
+        const response = await fetch(`${API_URL}/users/me/favorites`, {
+            headers: { 'Authorization': `Bearer ${authStore.token}` }
+        })
+        if (response.ok) favorites.value = await response.json()
+    } catch (error) {
+        console.error('Error fetching favorites:', error)
     }
 }
 
@@ -197,7 +210,9 @@ onMounted(async () => {
     }
 
     loading.value = true
-    await Promise.all([fetchOrders(), fetchAddresses()])
+    loading.value = true
+    await Promise.all([fetchOrders(), fetchAddresses(), fetchFavorites()])
+    loading.value = false
     loading.value = false
 })
 </script>
@@ -250,8 +265,16 @@ onMounted(async () => {
                             @click="activeTab = 'details'"
                             :class="['block w-full text-left pl-2 border-l-2 transition-colors duration-300', activeTab === 'details' ? 'text-gl-red border-gl-red font-medium' : 'text-gray-500 border-transparent hover:text-black']"
                         >
-                             <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-2">
                                 <User class="w-4 h-4" /> Account Details
+                            </div>
+                        </button>
+                        <button 
+                            @click="activeTab = 'favorites'"
+                            :class="['block w-full text-left pl-2 border-l-2 transition-colors duration-300', activeTab === 'favorites' ? 'text-gl-red border-gl-red font-medium' : 'text-gray-500 border-transparent hover:text-black']"
+                        >
+                             <div class="flex items-center gap-2">
+                                <Heart class="w-4 h-4" /> Favorites
                             </div>
                         </button>
                     </nav>
@@ -371,6 +394,22 @@ onMounted(async () => {
                                 <BaseButton type="submit" class="w-full">Save Changes</BaseButton>
                             </div>
                         </form>
+                    </div>
+
+                    <!-- FAVORITES TAB -->
+                    <div v-else-if="activeTab === 'favorites'" class="animate-fade-in">
+                        <h2 class="font-serif text-2xl mb-8">My Favorites</h2>
+                         <div v-if="favorites.length === 0" class="text-center py-12 bg-gl-gray rounded-sm">
+                            <p class="mb-4 text-gl-dark-gray">You haven't added any favorites yet.</p>
+                            <router-link to="/products" class="text-gl-red underline">Discover Collection</router-link>
+                        </div>
+                        <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <ProductCard 
+                                v-for="product in favorites" 
+                                :key="product.id" 
+                                :product="product"
+                            />
+                        </div>
                     </div>
 
                 </div>

@@ -15,7 +15,8 @@ export const useProductStore = defineStore('product', () => {
         colors: [],
         gender: null,
         minPrice: 0,
-        maxPrice: 2000
+        maxPrice: 2000,
+        searchQuery: ''
     })
 
     const currentProduct = ref(null)
@@ -51,6 +52,7 @@ export const useProductStore = defineStore('product', () => {
             const brands = overrides.brand || activeFilters.value.brand
             const colors = overrides.colors || activeFilters.value.colors
             const gender = overrides.gender || activeFilters.value.gender
+            const q = overrides.searchQuery || activeFilters.value.searchQuery
 
             if (cats && cats.length) {
                 if (Array.isArray(cats)) cats.forEach(c => params.append('category', c))
@@ -67,6 +69,10 @@ export const useProductStore = defineStore('product', () => {
 
             if (gender) {
                 params.append('gender', gender)
+            }
+
+            if (q) {
+                params.append('q', q)
             }
 
             // Price
@@ -132,7 +138,8 @@ export const useProductStore = defineStore('product', () => {
             colors: [],
             gender: null,
             minPrice: 0,
-            maxPrice: 2000
+            maxPrice: 2000,
+            searchQuery: ''
         }
         if (shouldFetch) fetchProducts()
     }

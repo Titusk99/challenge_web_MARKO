@@ -28,27 +28,37 @@ MARKO is a high-end e-commerce platform specializing in branded textiles. This p
    cd challenge_web_MARKO
    ```
 
-2. **Start the Application (Backend + DB)**
-
-   ```bash
-   docker compose up -d --build
-   ```
-
-   - The Backend API will be available at `http://localhost:8000`.
-   - The Database will be running on port `5432`.
-
-3. **Frontend Setup**
+2. **Install Dependencies**
    ```bash
    npm install
-   npm run dev
    ```
-   - The Frontend will be available at `http://localhost:5173`.
+
+3. **Start Application**
+   ```bash
+   npm start
+   ```
+   This command will:
+   - Start the Docker containers (Backend + DB).
+   - Start the Frontend development server at `http://localhost:5173`.
+   - The Backend API will be available at `http://localhost:8000`.
 
 ## Project Structure
 
-- `/src`: Vue 3 Frontend source code
-- `/backend`: FastAPI Backend source code
-- `docker-compose.yml`: Docker orchestration configuration
+- `/backend`             # FastAPI Application
+  - `/app`               # Application Logic (Routes, Models, Schemas)
+  - `Dockerfile`         # Backend Container Definition
+  - `init.sql`           # Database Intialization Script
+  - `requirements.txt`   # Python Dependencies
+- `/src`                 # Vue 3 Frontend
+  - `/assets`            # Static Assets (Images, Fonts)
+  - `/components`        # Reusable Vue Components
+  - `/stores`            # Pinia State Stores (Auth, Cart, etc.)
+  - `/views`             # Page Components (Home, ProductDetail, etc.)
+  - `App.vue`            # Main App Component
+  - `main.js`            # Entry Point
+- `docker-compose.yml`   # Orchestration for Backend & DB
+- `package.json`         # Frontend Dependencies & Scripts
+- `start_dev.sh`         # Utility script to launch full stack
 
 ## 🚀 Site Tour & Functionality Guide
 

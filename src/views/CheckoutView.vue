@@ -4,9 +4,11 @@ import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cart'
 import { useToastStore } from '@/stores/toast'
+import { useAuthStore } from '@/stores/auth'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import { CheckCircle, CreditCard, Truck } from 'lucide-vue-next'
 import { API_URL } from '@/config'
+import { onMounted, watch } from 'vue'
 
 const router = useRouter()
 const cartStore = useCartStore()
@@ -26,6 +28,10 @@ const shippingForm = ref({
   country: 'France'
 })
 
+const authStore = useAuthStore() // Add auth store use
+const addresses = ref([])
+const savedAddressId = ref('new')
+
 const paymentForm = ref({
   cardNumber: '',
   expiry: '',
@@ -33,15 +39,78 @@ const paymentForm = ref({
   nameOnCard: ''
 })
 
+onMounted(async () => {
+    if (authStore.isAuthenticated) {
+        try {
+            const response = await fetch(`${API_URL}/users/me/addresses`, {
+                headers: { 'Authorization': `Bearer ${authStore.token}` }
+            })
+            if (response.ok) {
+                addresses.value = await response.json()
+                if (addresses.value.length > 0) {
+                    savedAddressId.value = addresses.value[0].id
+                    fillFormWithAddress(addresses.value[0])
+                }
+            }
+        } catch (e) {
+            console.error(e)
+        }
+    }
+})
+
+const fillFormWithAddress = (addr) => {
+    shippingForm.value = {
+        firstName: authStore.user?.full_name?.split(' ')[0] || '',
+        lastName: authStore.user?.full_name?.split(' ').slice(1).join(' ') || '',
+        email: authStore.user?.email || '',
+        address: addr.street,
+        city: addr.city,
+        zipCode: addr.zip_code,
+        country: addr.country
+    }
+}
+
+watch(savedAddressId, (newVal) => {
+    if (newVal === 'new') {
+        shippingForm.value = { firstName: '', lastName: '', email: '', address: '', city: '', zipCode: '', country: 'France' }
+    } else {
+        const addr = addresses.value.find(a => a.id === newVal)
+        if (addr) fillFormWithAddress(addr)
+    }
+})
+
 const shippingCost = computed(() => cartTotal.value > 200 ? 0 : 15)
 const total = computed(() => cartTotal.value + shippingCost.value)
 
-const nextStep = () => {
+const nextStep = async () => {
   if (currentStep.value === 1) {
-    if (!shippingForm.value.firstName || !shippingForm.value.address) {
+    if ((savedAddressId.value === 'new') && (!shippingForm.value.firstName || !shippingForm.value.address)) {
       toastStore.addToast('Please fill in all required fields', 'error')
       return
     }
+    
+    // Auto-save address if new and authenticated
+    if (savedAddressId.value === 'new' && authStore.isAuthenticated) {
+        try {
+             await fetch(`${API_URL}/users/me/addresses`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authStore.token}`
+                },
+                body: JSON.stringify({
+                    name: 'Checkout Address',
+                    street: shippingForm.value.address,
+                    city: shippingForm.value.city,
+                    zip_code: shippingForm.value.zipCode,
+                    country: shippingForm.value.country
+                })
+            })
+        } catch (e) {
+            console.error('Failed to auto-save address', e)
+        }
+    }
+
     currentStep.value = 2
   }
 }
@@ -55,11 +124,17 @@ const processPayment = async () => {
   
   try {
     // 1. Create Payment Intent (Mock or Real)
+    if (!authStore.isAuthenticated) {
+        toastStore.addToast('You must be logged in to pay', 'error')
+        router.push('/login')
+        return
+    }
+
     const response = await fetch(`${API_URL}/payment/create-payment-intent`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}` // Ensure auth
+            'Authorization': `Bearer ${authStore.token}` 
         },
         body: JSON.stringify({
             amount: Math.round(total.value * 100), // In cents
@@ -70,6 +145,7 @@ const processPayment = async () => {
 
     if (!response.ok) {
         const err = await response.json()
+        console.error('Payment intent error:', err)
         throw new Error(err.detail || 'Payment failed')
     }
 
@@ -80,7 +156,7 @@ const processPayment = async () => {
         const confirmResponse = await fetch(`${API_URL}/payment/confirm-order?payment_intent_id=${data.id}`, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                'Authorization': `Bearer ${authStore.token}`
             }
         })
         
@@ -138,7 +214,17 @@ const processPayment = async () => {
           <!-- Step 1: Shipping -->
           <div v-if="currentStep === 1" class="animate-fade-in">
             <h2 class="text-2xl font-serif mb-8">Shipping Information</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <!-- Address Selection -->
+            <div v-if="addresses.length > 0" class="mb-8">
+                <label class="text-xs uppercase tracking-wider text-gray-500 block mb-2">Select Address</label>
+                <select v-model="savedAddressId" class="w-full border-b border-gray-300 py-2 focus:outline-none focus:border-gl-black bg-transparent">
+                    <option v-for="addr in addresses" :key="addr.id" :value="addr.id">{{ addr.name }} - {{ addr.street }}</option>
+                    <option value="new">Use a new address</option>
+                </select>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" :class="{ 'opacity-50 pointer-events-none': savedAddressId !== 'new' }">
               <div class="space-y-2">
                 <label class="text-xs uppercase tracking-wider text-gray-500">First Name</label>
                 <input 

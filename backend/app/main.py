@@ -7,6 +7,7 @@ from typing import List, Optional
 from decimal import Decimal
 
 from . import models, schemas, auth, database, payment
+from sqlalchemy import or_
 
 models.Base.metadata.create_all(bind=database.engine)
 
@@ -17,10 +18,7 @@ app = FastAPI()
 app.include_router(payment.router)
 
 origins = [
-    "http://localhost:5173",
-    "http://localhost:5174",
-    "http://localhost:3000",
-    "http://127.0.0.1:5173",
+    "*",
 ]
 
 app.add_middleware(
@@ -140,6 +138,40 @@ def delete_address(address_id: int, current_user: models.User = Depends(auth.get
     db.delete(db_address)
     db.commit()
     return {"message": "Address deleted"}
+
+# --- Favorites Endpoints ---
+
+@app.post("/users/me/favorites/{product_id}", status_code=status.HTTP_201_CREATED)
+def add_favorite(product_id: int, current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
+    # Check if product exists
+    product = db.query(models.Product).filter(models.Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+
+    # Check if already favorite
+    existing_fav = db.query(models.Favorite).filter(models.Favorite.user_id == current_user.id, models.Favorite.product_id == product_id).first()
+    if existing_fav:
+        return {"message": "Already in favorites"}
+
+    new_fav = models.Favorite(user_id=current_user.id, product_id=product_id)
+    db.add(new_fav)
+    db.commit()
+    return {"message": "Added to favorites"}
+
+@app.get("/users/me/favorites", response_model=List[schemas.ProductResponse])
+def get_favorites(current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
+    # Return list of Product objects via relationship
+    return [f.product for f in current_user.favorites]
+
+@app.delete("/users/me/favorites/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
+def remove_favorite(product_id: int, current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
+    fav = db.query(models.Favorite).filter(models.Favorite.user_id == current_user.id, models.Favorite.product_id == product_id).first()
+    if not fav:
+        raise HTTPException(status_code=404, detail="Favorite not found")
+    
+    db.delete(fav)
+    db.commit()
+    return None
 
 # --- Cart Endpoints ---
 
@@ -378,12 +410,12 @@ from fastapi import FastAPI, Depends, HTTPException, status, Query
 # ... (Previous imports exist, just ensure Query is imported if not already)
 
 @app.get("/products", response_model=List[schemas.ProductResponse])
-@app.get("/products", response_model=List[schemas.ProductResponse])
 def get_public_products(
     category: Optional[List[str]] = Query(None), 
     brand: Optional[List[str]] = Query(None),
     color: Optional[List[str]] = Query(None),
     gender: Optional[str] = Query(None), # New parameter
+    q: Optional[str] = Query(None), # Search parameter
     min_price: Optional[Decimal] = None,
     max_price: Optional[Decimal] = None,
     db: Session = Depends(get_db)
@@ -405,6 +437,16 @@ def get_public_products(
         
     if color:
         query = query.filter(models.Product.color.in_(color))
+
+    if q:
+        search = f"%{q}%"
+        query = query.filter(
+            or_(
+                models.Product.name.ilike(search),
+                models.Product.description.ilike(search),
+                models.Product.brand.ilike(search)
+            )
+        )
         
     if min_price is not None:
         query = query.filter(models.Product.price >= min_price)
