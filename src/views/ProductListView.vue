@@ -43,6 +43,11 @@ const loadProducts = () => {
         productStore.setFilter('gender', genderQuery)
     }
 
+    const searchQuery = route.query.q
+    if (searchQuery) {
+        productStore.setFilter('searchQuery', searchQuery)
+    }
+
     productStore.fetchProducts()
 }
 
