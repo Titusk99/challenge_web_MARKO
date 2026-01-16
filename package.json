@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "start": "bash ./start_dev.sh",
     "build": "vite build",
     "preview": "vite preview"
   },

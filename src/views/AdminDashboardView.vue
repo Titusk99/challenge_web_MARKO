@@ -3,6 +3,7 @@ import { onMounted } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import { useRouter, useRoute } from 'vue-router'
 import { Pencil, Trash2, Package } from 'lucide-vue-next'
+import { API_URL } from '@/config'
 
 
 const authStore = useAuthStore()
@@ -32,7 +33,7 @@ const closeStockModal = () => {
 
 const updateStock = async (variant) => {
     try {
-        const response = await fetch(`http://localhost:8000/admin/variants/${variant.id}`, {
+        const response = await fetch(`${API_URL}/admin/variants/${variant.id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

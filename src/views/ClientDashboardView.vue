@@ -4,6 +4,7 @@ import { useAuthStore } from '../stores/auth'
 import { useRouter } from 'vue-router'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import { Trash2, Plus, MapPin, User, Package } from 'lucide-vue-next'
+import { API_URL } from '@/config'
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -42,7 +43,7 @@ const showMessage = (text, type = 'success') => {
 // ... existing fetch functions ...
 const fetchOrders = async () => {
     try {
-        const response = await fetch('http://localhost:8001/users/me/orders', {
+        const response = await fetch(`${API_URL}/users/me/orders`, {
             headers: { 'Authorization': `Bearer ${authStore.token}` }
         })
         if (response.ok) orders.value = await response.json()
@@ -53,7 +54,7 @@ const fetchOrders = async () => {
 
 const fetchAddresses = async () => {
     try {
-        const response = await fetch('http://localhost:8001/users/me/addresses', {
+        const response = await fetch(`${API_URL}/users/me/addresses`, {
             headers: { 'Authorization': `Bearer ${authStore.token}` }
         })
         if (response.ok) addresses.value = await response.json()
@@ -66,7 +67,7 @@ const fetchAddresses = async () => {
 
 const createAddress = async () => {
     try {
-        const response = await fetch('http://localhost:8001/users/me/addresses', {
+        const response = await fetch(`${API_URL}/users/me/addresses`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -101,7 +102,7 @@ const deleteAddress = async (id) => {
     if (!confirm('Are you sure you want to delete this address?')) return
 
     try {
-        const response = await fetch(`http://localhost:8001/users/me/addresses/${id}`, {
+        const response = await fetch(`${API_URL}/users/me/addresses/${id}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${authStore.token}` }
         })
@@ -136,7 +137,7 @@ const executeUpdateUser = async () => {
         }
         if (userForm.password) payload.password = userForm.password
 
-        const response = await fetch('http://localhost:8001/users/me', {
+        const response = await fetch(`${API_URL}/users/me`, {
             method: 'PUT',
             headers: { 
                 'Content-Type': 'application/json',
