@@ -27,21 +27,19 @@ MARKO is a high-end e-commerce platform specializing in branded textiles. This p
    cd challenge_web_MARKO
    ```
 
-2. **Start the Application (Backend + DB)**
-
-   ```bash
-   docker compose up -d --build
-   ```
-
-   - The Backend API will be available at `http://localhost:8000`.
-   - The Database will be running on port `5432`.
-
-3. **Frontend Setup**
+2. **Install Dependencies**
    ```bash
    npm install
-   npm run dev
    ```
-   - The Frontend will be available at `http://localhost:5173`.
+
+3. **Start Application**
+   ```bash
+   npm start
+   ```
+   This command will:
+   - Start the Docker containers (Backend + DB).
+   - Start the Frontend development server at `http://localhost:5173`.
+   - The Backend API will be available at `http://localhost:8000`.
 
 ## Project Structure
 
