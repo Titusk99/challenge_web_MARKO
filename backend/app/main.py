@@ -7,6 +7,7 @@ from typing import List, Optional
 from decimal import Decimal
 
 from . import models, schemas, auth, database, payment
+from sqlalchemy import or_
 
 models.Base.metadata.create_all(bind=database.engine)
 
@@ -378,12 +379,12 @@ from fastapi import FastAPI, Depends, HTTPException, status, Query
 # ... (Previous imports exist, just ensure Query is imported if not already)
 
 @app.get("/products", response_model=List[schemas.ProductResponse])
-@app.get("/products", response_model=List[schemas.ProductResponse])
 def get_public_products(
     category: Optional[List[str]] = Query(None), 
     brand: Optional[List[str]] = Query(None),
     color: Optional[List[str]] = Query(None),
     gender: Optional[str] = Query(None), # New parameter
+    q: Optional[str] = Query(None), # Search parameter
     min_price: Optional[Decimal] = None,
     max_price: Optional[Decimal] = None,
     db: Session = Depends(get_db)
@@ -405,6 +406,16 @@ def get_public_products(
         
     if color:
         query = query.filter(models.Product.color.in_(color))
+
+    if q:
+        search = f"%{q}%"
+        query = query.filter(
+            or_(
+                models.Product.name.ilike(search),
+                models.Product.description.ilike(search),
+                models.Product.brand.ilike(search)
+            )
+        )
         
     if min_price is not None:
         query = query.filter(models.Product.price >= min_price)
