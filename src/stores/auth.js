@@ -59,7 +59,7 @@ export const useAuthStore = defineStore('auth', () => {
         isLoading.value = true
         error.value = null
         try {
-            const response = await fetch(`${API_URL}/register`, {
+            const response = await fetch(`${AUTH_URL}/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
