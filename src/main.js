@@ -21,9 +21,24 @@ const router = createRouter({
             component: () => import('./views/HomeView.vue'),
         },
         {
+            path: '/category/:id',
+            name: 'category-root',
+            component: () => import('./views/ProductListView.vue'),
+        },
+        {
             path: '/category/:gender/:slug',
             name: 'category-detail',
             component: () => import('./views/ProductListView.vue'), // Reuse ProductListView
+        },
+        {
+            path: '/sales',
+            name: 'sales',
+            component: () => import('./views/ProductListView.vue'),
+        },
+        {
+            path: '/new-arrivals',
+            name: 'new-arrivals',
+            component: () => import('./views/ProductListView.vue'),
         },
         {
             path: '/products',

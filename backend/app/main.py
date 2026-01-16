@@ -254,6 +254,30 @@ def remove_form_cart(
     
     return cart
 
+@app.get("/products", response_model=List[schemas.ProductResponse])
+def get_public_products(
+    category: str = None,
+    gender: str = None,
+    min_price: float = 0,
+    max_price: float = 2000,
+    db: Session = Depends(get_db)
+):
+    query = db.query(models.Product).join(models.Category)
+    
+    if category:
+        query = query.filter(models.Category.slug == category)
+        
+    if gender:
+         query = query.filter(models.Category.gender == gender)
+         
+    if min_price > 0:
+        query = query.filter(models.Product.price >= min_price)
+        
+    if max_price < 2000:
+        query = query.filter(models.Product.price <= max_price)
+        
+    return query.all()
+
 ### ADMIN ROUTES ###
 
 @app.get("/admin/products", response_model=List[schemas.ProductResponse])

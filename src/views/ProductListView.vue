@@ -17,9 +17,24 @@ const loadProducts = () => {
     const categoryQuery = route.query.category
     const genderQuery = route.query.gender
     
-    // Clear filters first if navigating to a "fresh" list (optional, but cleaner)
+    // Clear filters first
     productStore.clearFilters()
 
+    // Handle Route Params (Footer Links)
+    if (route.name === 'category-root') {
+        const id = route.params.id
+        if (['women', 'men'].includes(id)) {
+            productStore.setFilter('gender', id)
+        } else {
+            productStore.setFilter('category', [id])
+        }
+    } else if (route.name === 'sales') {
+        // Implement sales logic if needed, for now just load all or specific category
+    } else if (route.name === 'new-arrivals') {
+        // Implement new arrivals logic
+    }
+
+    // Handle Query Params (Sidebar Filters)
     if (categoryQuery) {
         productStore.setFilter('category', [categoryQuery])
     }
@@ -28,18 +43,15 @@ const loadProducts = () => {
         productStore.setFilter('gender', genderQuery)
     }
 
-    productStore.fetchProducts({
-        category: categoryQuery,
-        gender: genderQuery
-    })
+    productStore.fetchProducts()
 }
 
 onMounted(() => {
     loadProducts()
 })
 
-// Watch for any query change
-watch(() => route.query, () => {
+// Watch for any query or param change
+watch(() => [route.query, route.params], () => {
     loadProducts()
 }, { deep: true })
 </script>
