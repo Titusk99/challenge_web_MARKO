@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref, reactive, computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
-import { Pencil, Trash2 } from 'lucide-vue-next'
+import { Pencil, Trash2, Package } from 'lucide-vue-next'
 import { API_URL } from '@/config'
 
 const authStore = useAuthStore()
@@ -11,6 +11,9 @@ const categories = ref([])
 const loading = ref(true)
 const isModalOpen = ref(false)
 const isEditing = ref(false)
+const isStockModalOpen = ref(false)
+const currentVariants = ref([])
+
 
 const currentProduct = reactive({
     id: null,
@@ -140,6 +143,38 @@ const formatPrice = (price) => {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(price)
 }
 
+const openStockModal = (product) => {
+    Object.assign(currentProduct, product)
+    // Sort variants by size - custom order
+    const sizeOrder = { 'XS': 1, 'S': 2, 'M': 3, 'L': 4, 'XL': 5 }
+    currentVariants.value = [...product.variants].sort((a, b) => {
+        return (sizeOrder[a.size] || 99) - (sizeOrder[b.size] || 99)
+    })
+    isStockModalOpen.value = true
+}
+
+const saveVariantStock = async (variant) => {
+    try {
+        const response = await fetch(`${API_URL}/admin/variants/${variant.id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authStore.token}`
+            },
+            body: JSON.stringify({ stock_quantity: variant.stock_quantity })
+        })
+
+        if (response.ok) {
+            // Optional: visual feedback
+        } else {
+            alert('Failed to update stock')
+        }
+    } catch (error) {
+        console.error('Error updating stock:', error)
+        alert('Error updating stock')
+    }
+}
+
 onMounted(async () => {
     loading.value = true
     await Promise.all([fetchProducts(), fetchCategories()])
@@ -205,6 +240,14 @@ onMounted(async () => {
                                 >
                                     <Trash2 class="w-3 h-3" />
                                     <span>Delete</span>
+                                </button>
+                                <button 
+                                    @click="openStockModal(product)" 
+                                    class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-md transition-colors"
+                                    title="Manage Stock"
+                                >
+                                    <Package class="w-3 h-3" />
+                                    <span>Stock</span>
                                 </button>
                             </div>
                         </td>
@@ -285,7 +328,49 @@ onMounted(async () => {
                             {{ isEditing ? 'Update' : 'Create' }}
                         </button>
                     </div>
+
                 </form>
+            </div>
+        </div>
+
+        <!-- Stock Management Modal -->
+        <div v-if="isStockModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gl-black-glass backdrop-blur-sm">
+            <div class="bg-white w-full max-w-md p-8 shadow-2xl animate-fade-in relative max-h-[90vh] overflow-y-auto">
+                <button @click="isStockModalOpen = false" class="absolute top-4 right-4 text-gray-400 hover:text-black">✕</button>
+                <div class="mb-6">
+                    <h2 class="font-serif text-2xl mb-1">Manage Stock</h2>
+                    <p class="text-sm text-gray-500">{{ currentProduct.name }}</p>
+                </div>
+                
+                <div class="space-y-4">
+                    <div v-for="variant in currentVariants" :key="variant.id" class="flex items-center justify-between p-3 bg-gray-50 rounded-sm">
+                        <div class="flex items-center gap-3">
+                            <span class="w-8 h-8 flex items-center justify-center bg-white border border-gray-200 text-sm font-medium">{{ variant.size }}</span>
+                            <span class="text-sm text-gray-600">Current: {{ variant.stock_quantity }}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                             <input 
+                                v-model.number="variant.stock_quantity" 
+                                type="number" 
+                                min="0"
+                                class="w-20 px-2 py-1 border border-gray-300 focus:border-gl-black outline-none text-right"
+                            />
+                            <button 
+                                @click="saveVariantStock(variant)"
+                                class="text-xs bg-gl-black text-white px-3 py-1.5 hover:bg-gray-800 transition-colors"
+                            >
+                                Save
+                            </button>
+                        </div>
+                    </div>
+                    <div v-if="currentVariants.length === 0" class="text-center py-4 text-gray-500 text-sm">
+                        No variants found for this product.
+                    </div>
+                </div>
+
+                <div class="mt-8 text-right">
+                    <button @click="isStockModalOpen = false" class="text-sm uppercase tracking-widest text-gl-black hover:underline">Done</button>
+                </div>
             </div>
         </div>
     </div>

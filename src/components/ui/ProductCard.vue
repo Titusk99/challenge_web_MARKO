@@ -31,7 +31,7 @@ const formatPrice = (price) => {
     </div>
     
     <div class="space-y-1">
-      <p class="text-xs uppercase tracking-wider text-gl-dark-gray">{{ product.category }}</p>
+      <p class="text-xs uppercase tracking-wider text-gl-dark-gray">{{ product.category?.name || product.category }}</p>
       <h3 class="font-serif text-lg leading-tight group-hover:text-gl-red transition-colors duration-300">{{ product.name }}</h3>
       <p class="font-sans font-medium">{{ formatPrice(product.price) }}</p>
     </div>
