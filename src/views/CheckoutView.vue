@@ -52,17 +52,51 @@ const prevStep = () => {
 const processPayment = async () => {
   isProcessing.value = true
   
-  // Simulate API call
   try {
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    
-    toastStore.addToast('Order placed successfully!', 'success')
-    cartStore.items = [] // Clear cart
-    // Redirect to success page or home for now
-    router.push('/')
+    // 1. Create Payment Intent (Mock or Real)
+    const response = await fetch('http://localhost:8001/payment/create-payment-intent', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}` // Ensure auth
+        },
+        body: JSON.stringify({
+            amount: Math.round(total.value * 100), // In cents
+            currency: 'usd',
+            // payment_method_id: ... (would come from Stripe.js in real mode)
+        })
+    })
+
+    if (!response.ok) {
+        const err = await response.json()
+        throw new Error(err.detail || 'Payment failed')
+    }
+
+    const data = await response.json()
+
+    // 2. Confirm Order (Update status in DB)
+    if (data.status === 'succeeded') {
+        const confirmResponse = await fetch(`http://localhost:8001/payment/confirm-order?payment_intent_id=${data.id}`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+        
+        if (confirmResponse.ok) {
+            toastStore.addToast('Payment successful! Order confirmed.', 'success')
+            cartStore.items = [] // Clear cart
+            router.push('/') // Redirect to home (or order success page)
+        } else {
+             throw new Error('Failed to confirm order')
+        }
+    } else {
+        throw new Error('Payment not succeeded')
+    }
     
   } catch (error) {
-    toastStore.addToast('Payment failed. Please try again.', 'error')
+    console.error(error)
+    toastStore.addToast(error.message || 'Payment failed. Please try again.', 'error')
   } finally {
     isProcessing.value = false
   }
