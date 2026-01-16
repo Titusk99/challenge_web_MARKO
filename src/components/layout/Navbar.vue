@@ -107,7 +107,7 @@ onMounted(() => {
         
         <RouterLink 
           v-if="auth.user?.role === 'admin'" 
-          to="/admin" 
+          to="/admin/products" 
           class="p-2 hover:bg-black/5 rounded-full transition-all duration-300 hover:scale-105 flex items-center gap-2 group mr-2"
           title="Admin Dashboard"
         >
