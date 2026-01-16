@@ -43,9 +43,21 @@ MARKO is a high-end e-commerce platform specializing in branded textiles. This p
 
 ## Project Structure
 
-- `/src`: Vue 3 Frontend source code
-- `/backend`: FastAPI Backend source code
-- `docker-compose.yml`: Docker orchestration configuration
+- `/backend`             # FastAPI Application
+  - `/app`               # Application Logic (Routes, Models, Schemas)
+  - `Dockerfile`         # Backend Container Definition
+  - `init.sql`           # Database Intialization Script
+  - `requirements.txt`   # Python Dependencies
+- `/src`                 # Vue 3 Frontend
+  - `/assets`            # Static Assets (Images, Fonts)
+  - `/components`        # Reusable Vue Components
+  - `/stores`            # Pinia State Stores (Auth, Cart, etc.)
+  - `/views`             # Page Components (Home, ProductDetail, etc.)
+  - `App.vue`            # Main App Component
+  - `main.js`            # Entry Point
+- `docker-compose.yml`   # Orchestration for Backend & DB
+- `package.json`         # Frontend Dependencies & Scripts
+- `start_dev.sh`         # Utility script to launch full stack
 
 ## Documentation
 
