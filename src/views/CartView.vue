@@ -14,7 +14,7 @@ const loading = ref(true)
 const fetchCart = async () => {
     loading.value = true
     try {
-        const response = await fetch('http://localhost:8000/cart', {
+        const response = await fetch('http://localhost:8001/cart', {
             headers: { 'Authorization': `Bearer ${authStore.token}` }
         })
         if (response.ok) {
@@ -33,7 +33,7 @@ const fetchCart = async () => {
 const removeFromCart = async (itemId) => {
     if (!confirm('Remove this item?')) return
     try {
-        const response = await fetch(`http://localhost:8000/cart/items/${itemId}`, {
+        const response = await fetch(`http://localhost:8001/cart/items/${itemId}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${authStore.token}` }
         })

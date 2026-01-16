@@ -19,7 +19,7 @@ export const useCartStore = defineStore('cart', () => {
     const fetchCart = async () => {
         if (!localStorage.getItem('token')) return
         try {
-            const response = await fetch('http://localhost:8000/cart', {
+            const response = await fetch('http://localhost:8001/cart', {
                 headers: getHeaders()
             })
             if (response.ok) {
@@ -42,7 +42,7 @@ export const useCartStore = defineStore('cart', () => {
         }
 
         try {
-            const response = await fetch('http://localhost:8000/cart/items', {
+            const response = await fetch('http://localhost:8001/cart/items', {
                 method: 'POST',
                 headers: getHeaders(),
                 body: JSON.stringify({
@@ -66,7 +66,7 @@ export const useCartStore = defineStore('cart', () => {
 
     const removeFromCart = async (itemId) => {
         try {
-            const response = await fetch(`http://localhost:8000/cart/items/${itemId}`, {
+            const response = await fetch(`http://localhost:8001/cart/items/${itemId}`, {
                 method: 'DELETE',
                 headers: getHeaders()
             })
