@@ -69,6 +69,41 @@ const router = createRouter({
             meta: { requiresAuth: true, requiresAdmin: true }
         },
         {
+            path: '/shipping-returns',
+            name: 'shipping-returns',
+            component: () => import('./views/static/ShippingReturns.vue')
+        },
+        {
+            path: '/size-guide',
+            name: 'size-guide',
+            component: () => import('./views/static/SizeGuideView.vue')
+        },
+        {
+            path: '/faq',
+            name: 'faq',
+            component: () => import('./views/static/FAQ.vue')
+        },
+        {
+            path: '/contact',
+            name: 'contact',
+            component: () => import('./views/static/ContactUs.vue')
+        },
+        {
+            path: '/terms',
+            name: 'terms',
+            component: () => import('./views/static/TermsConditions.vue')
+        },
+        {
+            path: '/privacy',
+            name: 'privacy',
+            component: () => import('./views/static/PrivacyPolicy.vue')
+        },
+        {
+            path: '/cookies',
+            name: 'cookies',
+            component: () => import('./views/static/CookiePolicy.vue')
+        },
+        {
             path: '/:pathMatch(.*)*',
             name: 'not-found',
             component: () => import('./views/NotFoundView.vue')
