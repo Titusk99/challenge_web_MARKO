@@ -6,15 +6,20 @@ from datetime import timedelta
 from typing import List, Optional
 from decimal import Decimal
 
-from . import models, schemas, auth, database
+from . import models, schemas, auth, database, payment
 from sqlalchemy import or_
 
 models.Base.metadata.create_all(bind=database.engine)
 
 app = FastAPI()
 
+# ... (CORS setup) ...
+
+app.include_router(payment.router)
+
 origins = [
     "http://localhost:5173",
+    "http://localhost:5174",
     "http://localhost:3000",
     "http://127.0.0.1:5173",
 ]

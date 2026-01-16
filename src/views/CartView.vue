@@ -1,7 +1,9 @@
 <script setup>
 import { onMounted, ref, computed } from 'vue'
-import { useAuthStore } from '../stores/auth'
+import { useCartStore } from '@/stores/cart'
+import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
+import { API_URL } from '@/config'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import { Trash2, ShoppingBag } from 'lucide-vue-next'
 
@@ -14,7 +16,7 @@ const loading = ref(true)
 const fetchCart = async () => {
     loading.value = true
     try {
-        const response = await fetch('http://localhost:8000/cart', {
+        const response = await fetch(`${API_URL}/cart`, {
             headers: { 'Authorization': `Bearer ${authStore.token}` }
         })
         if (response.ok) {
@@ -33,7 +35,7 @@ const fetchCart = async () => {
 const removeFromCart = async (itemId) => {
     if (!confirm('Remove this item?')) return
     try {
-        const response = await fetch(`http://localhost:8000/cart/items/${itemId}`, {
+        const response = await fetch(`${API_URL}/cart/items/${itemId}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${authStore.token}` }
         })

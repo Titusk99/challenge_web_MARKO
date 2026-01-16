@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToastStore } from './toast'
+import { API_URL } from '@/config'
 
 export const useAuthStore = defineStore('auth', () => {
     const user = ref(JSON.parse(localStorage.getItem('user')) || null)
@@ -15,7 +16,7 @@ export const useAuthStore = defineStore('auth', () => {
     const isAuthenticated = computed(() => !!token.value)
 
     // API URL - Ensure this matches your backend URL
-    const API_URL = 'http://localhost:8000/auth'
+    const AUTH_URL = `${API_URL}/auth`
 
     const login = async (email, password) => {
         isLoading.value = true
@@ -25,7 +26,7 @@ export const useAuthStore = defineStore('auth', () => {
             formData.append('username', email)
             formData.append('password', password)
 
-            const response = await fetch(`${API_URL}/login`, {
+            const response = await fetch(`${AUTH_URL}/login`, {
                 method: 'POST',
                 body: formData
             })
@@ -58,7 +59,7 @@ export const useAuthStore = defineStore('auth', () => {
         isLoading.value = true
         error.value = null
         try {
-            const response = await fetch(`${API_URL}/register`, {
+            const response = await fetch(`${AUTH_URL}/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -91,7 +92,7 @@ export const useAuthStore = defineStore('auth', () => {
         if (!token.value) return
 
         try {
-            const response = await fetch('http://localhost:8000/users/me', {
+            const response = await fetch(`${API_URL}/users/me`, {
                 headers: {
                     'Authorization': `Bearer ${token.value}`
                 }

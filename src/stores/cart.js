@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useToastStore } from './toast'
 import { useAuthStore } from './auth'
+import { API_URL } from '@/config'
 
 export const useCartStore = defineStore('cart', () => {
     const items = ref([]) // This should mirror backend OrderItems
@@ -19,7 +20,7 @@ export const useCartStore = defineStore('cart', () => {
     const fetchCart = async () => {
         if (!localStorage.getItem('token')) return
         try {
-            const response = await fetch('http://localhost:8000/cart', {
+            const response = await fetch(`${API_URL}/cart`, {
                 headers: getHeaders()
             })
             if (response.ok) {
@@ -42,7 +43,7 @@ export const useCartStore = defineStore('cart', () => {
         }
 
         try {
-            const response = await fetch('http://localhost:8000/cart/items', {
+            const response = await fetch(`${API_URL}/cart/items`, {
                 method: 'POST',
                 headers: getHeaders(),
                 body: JSON.stringify({
@@ -66,7 +67,7 @@ export const useCartStore = defineStore('cart', () => {
 
     const removeFromCart = async (itemId) => {
         try {
-            const response = await fetch(`http://localhost:8000/cart/items/${itemId}`, {
+            const response = await fetch(`${API_URL}/cart/items/${itemId}`, {
                 method: 'DELETE',
                 headers: getHeaders()
             })
