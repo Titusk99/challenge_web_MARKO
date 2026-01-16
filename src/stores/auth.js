@@ -15,7 +15,7 @@ export const useAuthStore = defineStore('auth', () => {
     const isAuthenticated = computed(() => !!token.value)
 
     // API URL - Ensure this matches your backend URL
-    const API_URL = 'http://localhost:8000/auth'
+    const API_URL = 'http://localhost:8001/auth'
 
     const login = async (email, password) => {
         isLoading.value = true
@@ -91,7 +91,7 @@ export const useAuthStore = defineStore('auth', () => {
         if (!token.value) return
 
         try {
-            const response = await fetch('http://localhost:8000/users/me', {
+            const response = await fetch('http://localhost:8001/users/me', {
                 headers: {
                     'Authorization': `Bearer ${token.value}`
                 }
