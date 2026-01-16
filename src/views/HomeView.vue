@@ -98,7 +98,9 @@ onMounted(() => {
             <p class="text-gl-dark-gray leading-relaxed mb-8">
                 Created for the modern connoisseur, MARKO redefines the shopping experience with a focus on quality, aesthetics, and fluidity.
             </p>
-            <BaseButton variant="outline">Read Our Story</BaseButton>
+            <router-link to="/about">
+              <BaseButton variant="outline">Read Our Story</BaseButton>
+            </router-link>
         </div>
     </section>
 

@@ -21,9 +21,24 @@ const router = createRouter({
             component: () => import('./views/HomeView.vue'),
         },
         {
+            path: '/category/:id',
+            name: 'category-root',
+            component: () => import('./views/ProductListView.vue'),
+        },
+        {
             path: '/category/:gender/:slug',
             name: 'category-detail',
             component: () => import('./views/ProductListView.vue'), // Reuse ProductListView
+        },
+        {
+            path: '/sales',
+            name: 'sales',
+            component: () => import('./views/ProductListView.vue'),
+        },
+        {
+            path: '/new-arrivals',
+            name: 'new-arrivals',
+            component: () => import('./views/ProductListView.vue'),
         },
         {
             path: '/products',
@@ -67,6 +82,46 @@ const router = createRouter({
             name: 'admin',
             component: () => import('./views/AdminDashboardView.vue'),
             meta: { requiresAuth: true, requiresAdmin: true }
+        },
+        {
+            path: '/shipping-returns',
+            name: 'shipping-returns',
+            component: () => import('./views/static/ShippingReturns.vue')
+        },
+        {
+            path: '/size-guide',
+            name: 'size-guide',
+            component: () => import('./views/static/SizeGuideView.vue')
+        },
+        {
+            path: '/faq',
+            name: 'faq',
+            component: () => import('./views/static/FAQ.vue')
+        },
+        {
+            path: '/contact',
+            name: 'contact',
+            component: () => import('./views/static/ContactUs.vue')
+        },
+        {
+            path: '/terms',
+            name: 'terms',
+            component: () => import('./views/static/TermsConditions.vue')
+        },
+        {
+            path: '/privacy',
+            name: 'privacy',
+            component: () => import('./views/static/PrivacyPolicy.vue')
+        },
+        {
+            path: '/cookies',
+            name: 'cookies',
+            component: () => import('./views/static/CookiePolicy.vue')
+        },
+        {
+            path: '/about',
+            name: 'about',
+            component: () => import('./views/static/AboutView.vue')
         },
         {
             path: '/:pathMatch(.*)*',

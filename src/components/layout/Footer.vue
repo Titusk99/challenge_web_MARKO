@@ -45,11 +45,11 @@ import { Instagram, Facebook, Twitter, Mail } from 'lucide-vue-next'
         <div>
           <h3 class="font-serif text-lg font-medium mb-6">Customer Care</h3>
           <ul class="space-y-4">
-            <li><a href="#" class="text-sm text-gl-dark-gray hover:text-gl-red transition-colors">Shipping & Returns</a></li>
-            <li><a href="#" class="text-sm text-gl-dark-gray hover:text-gl-red transition-colors">Size Guide</a></li>
-            <li><a href="#" class="text-sm text-gl-dark-gray hover:text-gl-red transition-colors">FAQ</a></li>
-            <li><a href="#" class="text-sm text-gl-dark-gray hover:text-gl-red transition-colors">Contact Us</a></li>
-            <li><a href="#" class="text-sm text-gl-dark-gray hover:text-gl-red transition-colors">Terms & Conditions</a></li>
+            <li><router-link to="/shipping-returns" class="text-sm text-gl-dark-gray hover:text-gl-red transition-colors">Shipping & Returns</router-link></li>
+            <li><router-link to="/size-guide" class="text-sm text-gl-dark-gray hover:text-gl-red transition-colors">Size Guide</router-link></li>
+            <li><router-link to="/faq" class="text-sm text-gl-dark-gray hover:text-gl-red transition-colors">FAQ</router-link></li>
+            <li><router-link to="/contact" class="text-sm text-gl-dark-gray hover:text-gl-red transition-colors">Contact Us</router-link></li>
+            <li><router-link to="/terms" class="text-sm text-gl-dark-gray hover:text-gl-red transition-colors">Terms & Conditions</router-link></li>
           </ul>
         </div>
 
@@ -77,8 +77,8 @@ import { Instagram, Facebook, Twitter, Mail } from 'lucide-vue-next'
       <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-gray-200">
         <p class="text-xs text-gl-dark-gray">© 2026 MARKO. All rights reserved.</p>
         <div class="flex gap-6 mt-4 md:mt-0">
-          <a href="#" class="text-xs text-gl-dark-gray hover:text-gl-black">Privacy Policy</a>
-          <a href="#" class="text-xs text-gl-dark-gray hover:text-gl-black">Cookie Policy</a>
+          <router-link to="/privacy" class="text-xs text-gl-dark-gray hover:text-gl-black">Privacy Policy</router-link>
+          <router-link to="/cookies" class="text-xs text-gl-dark-gray hover:text-gl-black">Cookie Policy</router-link>
         </div>
       </div>
     </div>

@@ -22,7 +22,7 @@ export const useProductStore = defineStore('product', () => {
     const fetchTrendingProducts = async () => {
         isLoading.value = true
         try {
-            const response = await fetch('http://localhost:8000/products')
+            const response = await fetch('http://localhost:8001/products')
             if (!response.ok) throw new Error('Failed to fetch products')
             const data = await response.json()
 
@@ -42,17 +42,13 @@ export const useProductStore = defineStore('product', () => {
     const fetchProducts = async (overrides = {}) => {
         isLoading.value = true
         try {
-            let url = 'http://localhost:8000/products'
+            let url = 'http://localhost:8001/products'
             const params = new URLSearchParams()
-
-            // Allow overrides (e.g. from route params) or use active state
-            // If overrides provided, usually we set state too? 
-            // Let's assume fetchProducts is called after state update or with specific intent.
-            // But if called with empty object, use state.
 
             const cats = overrides.category || activeFilters.value.category
             const brands = overrides.brand || activeFilters.value.brand
             const colors = overrides.colors || activeFilters.value.colors
+            const gender = overrides.gender || activeFilters.value.gender
 
             if (cats && cats.length) {
                 if (Array.isArray(cats)) cats.forEach(c => params.append('category', c))
@@ -65,6 +61,10 @@ export const useProductStore = defineStore('product', () => {
 
             if (colors && colors.length) {
                 colors.forEach(c => params.append('color', c))
+            }
+
+            if (gender) {
+                params.append('gender', gender)
             }
 
             // Price
@@ -96,7 +96,7 @@ export const useProductStore = defineStore('product', () => {
         isLoading.value = true
         currentProduct.value = null
         try {
-            const response = await fetch(`http://localhost:8000/products/${id}`)
+            const response = await fetch(`http://localhost:8001/products/${id}`)
             if (!response.ok) throw new Error('Product not found')
             const data = await response.json()
 
