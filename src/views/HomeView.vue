@@ -37,8 +37,12 @@ onMounted(() => {
         </p>
         
         <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <BaseButton class="min-w-[180px] !bg-white !text-gl-black hover:!bg-gl-gray">Shop Women</BaseButton>
-          <BaseButton class="min-w-[180px] !bg-transparent border border-white !text-white hover:!bg-white/10">Shop Men</BaseButton>
+          <router-link to="/category/women">
+            <BaseButton class="min-w-[180px] !bg-white !text-gl-black hover:!bg-gl-gray">Shop Women</BaseButton>
+          </router-link>
+          <router-link to="/category/men">
+            <BaseButton class="min-w-[180px] !bg-transparent border border-white !text-white hover:!bg-white/10">Shop Men</BaseButton>
+          </router-link>
         </div>
       </div>
     </section>

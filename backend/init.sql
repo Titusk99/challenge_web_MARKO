@@ -161,6 +161,39 @@ ALTER TABLE IF EXISTS public.addresses
     ON DELETE CASCADE;
 
 
+
+-- Women Categories
+INSERT INTO public.categories (name, slug, gender) VALUES
+('Coats & Jackets', 'women-coats-jackets', 'Women'),
+('Dresses', 'women-dresses', 'Women'),
+('Tops & Shirts', 'women-tops-shirts', 'Women'),
+('Pants', 'women-pants', 'Women'),
+('Knitwear', 'women-knitwear', 'Women'),
+('Skirts', 'women-skirts', 'Women'),
+('Shoes', 'women-shoes', 'Women'),
+('Bags', 'women-bags', 'Women')
+ON CONFLICT (slug) DO NOTHING;
+
+-- Men Categories
+INSERT INTO public.categories (name, slug, gender) VALUES
+('Suits & Blazers', 'men-suits-blazers', 'Men'),
+('Shirts', 'men-shirts', 'Men'),
+('Trousers', 'men-trousers', 'Men'),
+('Jeans', 'men-jeans', 'Men'),
+('Outerwear', 'men-outerwear', 'Men'),
+('Shoes', 'men-shoes', 'Men'),
+('Accessories', 'men-accessories', 'Men')
+ON CONFLICT (slug) DO NOTHING;
+
+-- Accessories Categories
+INSERT INTO public.categories (name, slug, gender) VALUES
+('Bags', 'acc-bags', 'Accessories'),
+('Jewelry', 'acc-jewelry', 'Accessories'),
+('Watches', 'acc-watches', 'Accessories'),
+('Sunglasses', 'acc-sunglasses', 'Accessories'),
+('Hats', 'acc-hats', 'Accessories')
+ON CONFLICT (slug) DO NOTHING;
+
 INSERT INTO public.users (email, password_hash, full_name, role)
 VALUES ('admin@admin.com', '$2b$12$tkSPEOt2ZpVJvKjdnzd49eq8KzN31Pa5d7XVWF8BHUt9pkaKgnlu2', 'Admin User', 'admin')
 ON CONFLICT (email) DO NOTHING;

@@ -12,6 +12,7 @@ export const useProductStore = defineStore('product', () => {
         category: [],
         brand: [],
         colors: [],
+        gender: null,
         minPrice: 0,
         maxPrice: 2000
     })
@@ -123,7 +124,7 @@ export const useProductStore = defineStore('product', () => {
         // Let's leave trigger to the View -> Watcher.
     }
 
-    const clearFilters = () => {
+    const clearFilters = (shouldFetch = true) => {
         activeFilters.value = {
             category: [],
             brand: [],
@@ -132,7 +133,7 @@ export const useProductStore = defineStore('product', () => {
             minPrice: 0,
             maxPrice: 2000
         }
-        fetchProducts()
+        if (shouldFetch) fetchProducts()
     }
 
     return {
