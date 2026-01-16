@@ -2,6 +2,7 @@
 import { onMounted, ref, reactive, computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { Pencil, Trash2 } from 'lucide-vue-next'
+import { API_URL } from '@/config'
 
 const authStore = useAuthStore()
 
@@ -37,7 +38,7 @@ const availableTypes = computed(() => {
 
 const fetchProducts = async () => {
     try {
-        const response = await fetch('http://localhost:8001/admin/products', {
+        const response = await fetch(`${API_URL}/admin/products`, {
             headers: { 'Authorization': `Bearer ${authStore.token}` }
         })
         if (response.ok) products.value = await response.json()
@@ -48,7 +49,7 @@ const fetchProducts = async () => {
 
 const fetchCategories = async () => {
     try {
-        const response = await fetch('http://localhost:8001/categories')
+        const response = await fetch(`${API_URL}/categories`)
         if (response.ok) categories.value = await response.json()
     } catch (error) {
         console.error('Error fetching categories:', error)
@@ -90,8 +91,8 @@ const closeModal = () => {
 const saveProduct = async () => {
     try {
         const url = isEditing.value 
-            ? `http://localhost:8001/admin/products/${currentProduct.id}`
-            : 'http://localhost:8001/admin/products'
+            ? `${API_URL}/admin/products/${currentProduct.id}`
+            : `${API_URL}/admin/products`
         
         const method = isEditing.value ? 'PUT' : 'POST'
         
@@ -125,7 +126,7 @@ const saveProduct = async () => {
 const deleteProduct = async (id) => {
     if (!confirm('Are you sure you want to delete this product?')) return
     try {
-        const response = await fetch(`http://localhost:8001/admin/products/${id}`, {
+        const response = await fetch(`${API_URL}/admin/products/${id}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${authStore.token}` }
         })
