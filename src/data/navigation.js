@@ -1,105 +1,105 @@
 export const navigation = {
     women: {
-        label: 'WOMEN',
-        column1: {
-            title: 'New Arrivals',
-            items: [
-                { label: 'View All', href: '/products?category=women-new' },
-                { label: 'Clothing', href: '/products?category=women-clothing' },
-                { label: 'Shoes', href: '/products?category=women-shoes' },
-                { label: 'Accessories', href: '/products?category=women-accessories' },
-            ]
-        },
-        column2: {
-            title: 'Clothing',
-            items: [
-                { label: 'Coats & Jackets', href: '/products?category=coats-jackets' },
-                { label: 'Dresses', href: '/products?category=dresses' },
-                { label: 'Tops & Shirts', href: '/products?category=tops-shirts' },
-                { label: 'Pants', href: '/products?category=pants' },
-                { label: 'Knitwear', href: '/products?category=knitwear' },
-            ]
-        },
-        column3: {
-            title: 'Curated',
-            items: [
-                { label: 'The Wedding Edit', href: '/products?category=wedding' },
-                { label: 'Vacation Shop', href: '/products?category=vacation' },
-                { label: 'Office Wear', href: '/products?category=office' },
-            ]
-        },
-        featured: {
-            image: 'https://images.unsplash.com/photo-1548767797-d8c844163c4c?q=80&w=800&auto=format&fit=crop', // Example luxurious image
-            title: 'THE SUMMER COLLECTION',
-            href: '/products?category=summer-collection'
-        }
+        id: 'women',
+        name: 'Women',
+        sections: [
+            {
+                id: 'clothing',
+                name: 'Clothing',
+                items: [
+                    { name: 'Dresses', href: '/products?category=dresses&gender=Women' },
+                    { name: 'Tops', href: '/products?category=tops&gender=Women' },
+                    { name: 'Pants', href: '/products?category=pants&gender=Women' },
+                    { name: 'Jackets', href: '/products?category=jackets&gender=Women' },
+                    { name: 'Activewear', href: '/products?category=activewear&gender=Women' },
+                ],
+            },
+            {
+                id: 'accessories',
+                name: 'Accessories',
+                items: [
+                    { name: 'Bags', href: '/products?category=bags&gender=Women' },
+                    { name: 'Jewelry', href: '/products?category=jewelry&gender=Women' },
+                    { name: 'Belts', href: '/products?category=belts&gender=Women' },
+                    { name: 'Sunglasses', href: '/products?category=sunglasses&gender=Women' },
+                ],
+            },
+            {
+                id: 'shoes',
+                name: 'Shoes',
+                items: [
+                    { name: 'Sneakers', href: '/products?category=sneakers&gender=Women' },
+                    { name: 'Boots', href: '/products?category=boots&gender=Women' },
+                    { name: 'Heels', href: '/products?category=heels&gender=Women' },
+                    { name: 'Sandals', href: '/products?category=sandals&gender=Women' },
+                ],
+            }
+        ],
     },
     men: {
-        label: 'MEN',
-        column1: {
-            title: 'New Arrivals',
-            items: [
-                { label: 'View All', href: '/products?category=men-new' },
-                { label: 'Clothing', href: '/products?category=men-clothing' },
-                { label: 'Shoes', href: '/products?category=men-shoes' },
-                { label: 'Accessories', href: '/products?category=men-accessories' },
-            ]
-        },
-        column2: {
-            title: 'Clothing',
-            items: [
-                { label: 'Suits & Blazers', href: '/products?category=suits-blazers' },
-                { label: 'Shirts', href: '/products?category=shirts' },
-                { label: 'Trousers', href: '/products?category=trousers' },
-                { label: 'Jeans', href: '/products?category=jeans' },
-                { label: 'Outerwear', href: '/products?category=outerwear' },
-            ]
-        },
-        column3: {
-            title: 'Edits',
-            items: [
-                { label: 'Business Casual', href: '/products?category=business-casual' },
-                { label: 'Weekend Ready', href: '/products?category=weekend-ready' },
-            ]
-        },
-        featured: {
-            image: 'https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?q=80&w=800&auto=format&fit=crop',
-            title: 'MODERN TAILORING',
-            href: '/products?category=modern-tailoring'
-        }
+        id: 'men',
+        name: 'Men',
+        sections: [
+            {
+                id: 'clothing',
+                name: 'Clothing',
+                items: [
+                    { name: 'Shirts', href: '/products?category=shirts&gender=Men' },
+                    { name: 'Pants', href: '/products?category=pants&gender=Men' },
+                    { name: 'Jackets', href: '/products?category=jackets&gender=Men' },
+                    { name: 'Suits', href: '/products?category=suits&gender=Men' },
+                ],
+            },
+            {
+                id: 'accessories',
+                name: 'Accessories',
+                items: [
+                    { name: 'Watches', href: '/products?category=watches&gender=Men' },
+                    { name: 'Wallets', href: '/products?category=wallets&gender=Men' },
+                    { name: 'Belts', href: '/products?category=belts&gender=Men' },
+                ],
+            },
+            {
+                id: 'shoes',
+                name: 'Shoes',
+                items: [
+                    { name: 'Sneakers', href: '/products?category=sneakers&gender=Men' },
+                    { name: 'Boots', href: '/products?category=boots&gender=Men' },
+                    { name: 'Oxfords', href: '/products?category=oxfords&gender=Men' },
+                ],
+            }
+        ],
     },
     beauty: {
-        label: 'BEAUTY',
-        column1: {
-            title: 'Categories',
-            items: [
-                { label: 'Skincare', href: '/products?category=skincare' },
-                { label: 'Makeup', href: '/products?category=makeup' },
-                { label: 'Fragrance', href: '/products?category=fragrance' },
-                { label: 'Haircare', href: '/products?category=haircare' },
-            ]
-        },
-        column2: {
-            title: 'Brands',
-            items: [
-                { label: 'Chanel', href: '/products?category=chanel' },
-                { label: 'Dior', href: '/products?category=dior' },
-                { label: 'La Mer', href: '/products?category=la-mer' },
-                { label: 'Aesop', href: '/products?category=aesop' },
-            ]
-        },
-        column3: {
-            title: 'Concern',
-            items: [
-                { label: 'Anti-Aging', href: '/products?category=anti-aging' },
-                { label: 'Hydration', href: '/products?category=hydration' },
-                { label: 'Blemishes', href: '/products?category=blemishes' },
-            ]
-        },
-        featured: {
-            image: 'https://images.unsplash.com/photo-1612817288484-9660c989716d?q=80&w=800&auto=format&fit=crop',
-            title: 'NEW SEASON BEAUTY',
-            href: '/products?category=new-beauty'
-        }
+        id: 'beauty',
+        name: 'Beauty',
+        sections: [
+            {
+                id: 'makeup',
+                name: 'Makeup',
+                items: [
+                    { name: 'Face', href: '/products?category=face' },
+                    { name: 'Eyes', href: '/products?category=eyes' },
+                    { name: 'Lips', href: '/products?category=lips' },
+                ],
+            },
+            {
+                id: 'skincare',
+                name: 'Skincare',
+                items: [
+                    { name: 'Moisturizers', href: '/products?category=moisturizers' },
+                    { name: 'Cleansers', href: '/products?category=cleansers' },
+                    { name: 'Serums', href: '/products?category=serums' },
+                ],
+            },
+            {
+                id: 'fragrance',
+                name: 'Fragrance',
+                items: [
+                    { name: 'Perfume', href: '/products?category=perfume' },
+                    { name: 'Cologne', href: '/products?category=cologne' },
+                ],
+            }
+        ],
     }
 }

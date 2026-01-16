@@ -333,12 +333,12 @@ from fastapi import FastAPI, Depends, HTTPException, status, Query
 # ... (Previous imports exist, just ensure Query is imported if not already)
 
 @app.get("/products", response_model=List[schemas.ProductResponse])
-@app.get("/products", response_model=List[schemas.ProductResponse])
 def get_public_products(
     category: Optional[List[str]] = Query(None), 
     brand: Optional[List[str]] = Query(None),
     color: Optional[List[str]] = Query(None),
     gender: Optional[str] = Query(None), # New parameter
+    search: Optional[str] = Query(None), # Search parameter
     min_price: Optional[Decimal] = None,
     max_price: Optional[Decimal] = None,
     db: Session = Depends(get_db)
@@ -365,7 +365,12 @@ def get_public_products(
         query = query.filter(models.Product.price >= min_price)
         
     if max_price is not None:
-         query = query.filter(models.Product.price <= max_price)
+        query = query.filter(models.Product.price <= max_price)
+        
+    if search:
+        search_term = f"%{search}%"
+        from sqlalchemy import or_
+        query = query.filter(or_(models.Product.name.ilike(search_term), models.Product.description.ilike(search_term)))
          
     return query.all()
 

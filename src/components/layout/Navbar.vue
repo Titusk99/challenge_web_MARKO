@@ -1,15 +1,41 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { RouterLink } from 'vue-router'
+import { ref, onMounted, watch, nextTick } from 'vue'
+import { RouterLink, useRouter } from 'vue-router'
 import { Search, ShoppingBag, User, Menu } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/auth'
 import { useCartStore } from '@/stores/cart'
 import MegaMenu from './MegaMenu.vue'
 import { navigation } from '@/data/navigation'
+import { onClickOutside } from '@vueuse/core'
 
 const auth = useAuthStore()
 const cartStore = useCartStore()
+const router = useRouter()
 const isScrolled = ref(false)
+
+const isSearchOpen = ref(false)
+const searchQuery = ref('')
+const searchInputRef = ref(null)
+const searchContainer = ref(null)
+
+const handleSearch = () => {
+    if (!searchQuery.value.trim()) return
+    router.push({ path: '/products', query: { search: searchQuery.value } })
+    isSearchOpen.value = false
+    searchQuery.value = ''
+}
+
+// Auto focus when opening
+watch(isSearchOpen, async (val) => {
+    if (val) {
+        await nextTick()
+        searchInputRef.value?.focus()
+    }
+})
+
+onClickOutside(searchContainer, () => {
+   if (isSearchOpen.value) isSearchOpen.value = false
+})
 
 // Mega Menu Logic
 const isMenuOpen = ref(false)
@@ -101,9 +127,47 @@ onMounted(() => {
 
       <!-- Icons -->
       <div class="flex items-center space-x-4">
-        <button class="p-2 hover:bg-black/5 rounded-full transition-all duration-300 hover:scale-105">
-          <Search class="w-5 h-5 text-gl-dark-gray" />
+        
+        <!-- Search Toggle -->
+        <button 
+           @click="isSearchOpen = !isSearchOpen" 
+           class="p-2 hover:bg-black/5 rounded-full transition-all duration-300 hover:scale-105"
+        >
+           <Search class="w-5 h-5 text-gl-dark-gray" />
         </button>
+
+        <!-- Search Overlay (Galeries Lafayette Style) -->
+        <div 
+           v-if="isSearchOpen" 
+           class="absolute top-full left-0 w-full bg-white border-t border-gray-100 shadow-xl z-50 animate-slide-down flex items-center justify-center py-6 px-4"
+           ref="searchContainer"
+        >
+            <div class="relative w-full max-w-2xl">
+                 <Search class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                 <input 
+                    ref="searchInputRef"
+                    v-model="searchQuery"
+                    @keyup.enter="handleSearch"
+                    type="text" 
+                    placeholder="Rechercher un produit, une marque..." 
+                    class="w-full pl-12 pr-12 py-3 text-base bg-gray-50 border-b-2 border-transparent focus:border-gl-black focus:bg-white focus:outline-none transition-all duration-300 font-medium"
+                 />
+                 <button 
+                    v-if="searchQuery" 
+                    @click="searchQuery = ''"
+                    class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black"
+                 >
+                    <span class="text-xs uppercase font-bold">Clear</span>
+                 </button>
+            </div>
+            <!-- Close Button -->
+            <button 
+                @click="isSearchOpen = false"
+                class="absolute right-8 top-1/2 -translate-y-1/2 text-sm font-medium text-gray-500 hover:text-black"
+            >
+                FERMER
+            </button>
+        </div>
         
         <RouterLink 
           v-if="auth.user?.role === 'admin'" 

@@ -12,6 +12,7 @@ export const useProductStore = defineStore('product', () => {
         category: [],
         brand: [],
         colors: [],
+        search: '',
         minPrice: 0,
         maxPrice: 2000
     })
@@ -45,14 +46,10 @@ export const useProductStore = defineStore('product', () => {
             let url = 'http://localhost:8000/products'
             const params = new URLSearchParams()
 
-            // Allow overrides (e.g. from route params) or use active state
-            // If overrides provided, usually we set state too? 
-            // Let's assume fetchProducts is called after state update or with specific intent.
-            // But if called with empty object, use state.
-
             const cats = overrides.category || activeFilters.value.category
             const brands = overrides.brand || activeFilters.value.brand
             const colors = overrides.colors || activeFilters.value.colors
+            const search = overrides.search || activeFilters.value.search
 
             if (cats && cats.length) {
                 if (Array.isArray(cats)) cats.forEach(c => params.append('category', c))
@@ -65,6 +62,11 @@ export const useProductStore = defineStore('product', () => {
 
             if (colors && colors.length) {
                 colors.forEach(c => params.append('color', c))
+            }
+
+            // Search
+            if (search) {
+                params.append('search', search)
             }
 
             // Price
@@ -118,9 +120,6 @@ export const useProductStore = defineStore('product', () => {
 
     const setFilter = (key, value) => {
         activeFilters.value[key] = value
-        // Auto-fetch when filters change? Or let UI trigger it?
-        // UI often calls `apply`. But reactive `watch` in view might call fetch.
-        // Let's leave trigger to the View -> Watcher.
     }
 
     const clearFilters = () => {
@@ -129,6 +128,7 @@ export const useProductStore = defineStore('product', () => {
             brand: [],
             colors: [],
             gender: null,
+            search: '',
             minPrice: 0,
             maxPrice: 2000
         }

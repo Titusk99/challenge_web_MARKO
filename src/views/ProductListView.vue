@@ -16,6 +16,7 @@ const isFilterOpen = ref(false)
 const loadProducts = () => {
     const categoryQuery = route.query.category
     const genderQuery = route.query.gender
+    const searchQuery = route.query.search
     
     // Clear filters first if navigating to a "fresh" list (optional, but cleaner)
     productStore.clearFilters()
@@ -28,9 +29,14 @@ const loadProducts = () => {
         productStore.setFilter('gender', genderQuery)
     }
 
+    if (searchQuery) {
+        productStore.setFilter('search', searchQuery)
+    }
+
     productStore.fetchProducts({
         category: categoryQuery,
-        gender: genderQuery
+        gender: genderQuery,
+        search: searchQuery
     })
 }
 
@@ -54,7 +60,9 @@ watch(() => route.query, () => {
         <!-- Header & Toolbar -->
         <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4 animate-fade-in">
             <div>
-                <h1 class="font-serif text-3xl md:text-4xl text-gl-black mb-2">All Products</h1>
+                <h1 class="font-serif text-3xl md:text-4xl text-gl-black mb-2">
+                    {{ route.query.search ? `Search results for "${route.query.search}"` : (route.query.category || 'All Products') }}
+                </h1>
                 <p class="text-sm text-gray-500">{{ filteredProducts.length }} items detected</p>
             </div>
             
