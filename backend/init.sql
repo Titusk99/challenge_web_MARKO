@@ -160,4 +160,9 @@ ALTER TABLE IF EXISTS public.addresses
     ON UPDATE NO ACTION
     ON DELETE CASCADE;
 
+
+INSERT INTO public.users (email, password_hash, full_name, role)
+VALUES ('admin@admin.com', '$2b$12$tkSPEOt2ZpVJvKjdnzd49eq8KzN31Pa5d7XVWF8BHUt9pkaKgnlu2', 'Admin User', 'admin')
+ON CONFLICT (email) DO NOTHING;
+
 END;
