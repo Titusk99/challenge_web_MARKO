@@ -351,6 +351,22 @@ def delete_product(
     db.commit()
     return None
 
+@app.put("/admin/variants/{variant_id}", response_model=schemas.ProductVariantResponse)
+def update_variant_stock(
+    variant_id: int, 
+    variant_update: schemas.ProductVariantUpdate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_admin_user)
+):
+    db_variant = db.query(models.ProductVariant).filter(models.ProductVariant.id == variant_id).first()
+    if not db_variant:
+        raise HTTPException(status_code=404, detail="Variant not found")
+    
+    db_variant.stock_quantity = variant_update.stock_quantity
+    db.commit()
+    db.refresh(db_variant)
+    return db_variant
+
 ### PUBLIC PRODUCT ROUTES ###
 
 @app.get("/categories", response_model=List[schemas.CategoryResponse])
