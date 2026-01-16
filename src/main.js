@@ -119,6 +119,11 @@ const router = createRouter({
             component: () => import('./views/static/CookiePolicy.vue')
         },
         {
+            path: '/about',
+            name: 'about',
+            component: () => import('./views/static/AboutView.vue')
+        },
+        {
             path: '/:pathMatch(.*)*',
             name: 'not-found',
             component: () => import('./views/NotFoundView.vue')
