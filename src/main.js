@@ -81,7 +81,33 @@ const router = createRouter({
             path: '/admin',
             name: 'admin',
             component: () => import('./views/AdminDashboardView.vue'),
-            meta: { requiresAuth: true, requiresAdmin: true }
+            meta: { requiresAuth: true, requiresAdmin: true },
+            children: [
+                {
+                    path: '',
+                    redirect: '/admin/products'
+                },
+                {
+                    path: 'products',
+                    name: 'admin-products',
+                    component: () => import('./views/admin/AdminProducts.vue')
+                },
+                {
+                    path: 'orders',
+                    name: 'admin-orders',
+                    component: () => import('./views/admin/AdminOrders.vue')
+                },
+                {
+                    path: 'customers',
+                    name: 'admin-customers',
+                    component: () => import('./views/admin/AdminCustomers.vue')
+                },
+                {
+                    path: 'settings',
+                    name: 'admin-settings',
+                    component: () => import('./views/admin/AdminSettings.vue')
+                }
+            ]
         },
         {
             path: '/shipping-returns',
