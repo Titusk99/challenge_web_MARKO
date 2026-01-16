@@ -23,7 +23,7 @@ MARKO is a high-end e-commerce platform specializing in branded textiles. This p
 1. **Clone the repository**
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Titusk99/challenge_web_MARKO.git
    cd challenge_web_MARKO
    ```
 
