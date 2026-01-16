@@ -79,7 +79,7 @@ const router = createRouter({
         },
         {
             path: '/admin',
-            name: 'admin',
+            // name: 'admin', // Removed to avoid warning with default child
             component: () => import('./views/AdminDashboardView.vue'),
             meta: { requiresAuth: true, requiresAdmin: true },
             children: [

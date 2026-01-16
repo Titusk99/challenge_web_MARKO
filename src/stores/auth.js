@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToastStore } from './toast'
+import { API_URL } from '@/config'
 
 export const useAuthStore = defineStore('auth', () => {
     const user = ref(JSON.parse(localStorage.getItem('user')) || null)
