@@ -116,6 +116,10 @@ class ProductVariantResponse(ProductVariantBase):
     class Config:
         from_attributes = True
 
+class ProductVariantUpdate(BaseModel):
+    stock_quantity: int
+
+
 # --- Order Item Schemas ---
 class OrderItemBase(BaseModel):
     product_variant_id: int
