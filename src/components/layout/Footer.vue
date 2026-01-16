@@ -17,13 +17,13 @@ import { Instagram, Facebook, Twitter, Mail } from 'lucide-vue-next'
             Redefining luxury retail with curated collections and timeless elegance. Quality that speaks for itself.
           </p>
           <div class="flex items-center gap-4">
-            <a href="#" class="p-2 bg-white rounded-full hover:bg-gl-black hover:text-white transition-all duration-300">
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="p-2 bg-white rounded-full hover:bg-gl-black hover:text-white transition-all duration-300">
               <Instagram class="w-4 h-4" />
             </a>
-            <a href="#" class="p-2 bg-white rounded-full hover:bg-gl-black hover:text-white transition-all duration-300">
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="p-2 bg-white rounded-full hover:bg-gl-black hover:text-white transition-all duration-300">
               <Facebook class="w-4 h-4" />
             </a>
-            <a href="#" class="p-2 bg-white rounded-full hover:bg-gl-black hover:text-white transition-all duration-300">
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="p-2 bg-white rounded-full hover:bg-gl-black hover:text-white transition-all duration-300">
               <Twitter class="w-4 h-4" />
             </a>
           </div>
