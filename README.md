@@ -17,6 +17,7 @@ MARKO is a high-end e-commerce platform specializing in branded textiles. This p
 
 - Docker & Docker Compose
 - Node.js (for local frontend development if needed)
+- Git
 
 ### Installation & Running
 
@@ -49,8 +50,34 @@ MARKO is a high-end e-commerce platform specializing in branded textiles. This p
 - `/backend`: FastAPI Backend source code
 - `docker-compose.yml`: Docker orchestration configuration
 
+## 🚀 Site Tour & Functionality Guide
+
+Here is a quick guide to explore the main features of MARKO:
+
+### 👤 Customer Journey
+1.  **Browse Products**: Use the **Mega Menu** (hover over Women/Men) or the **Search Bar** to find products.
+2.  **Product Details**: Click on a product to view images, select sizes, and check the **Size Guide**.
+3.  **Favorites**: Create an account to save items to your **Favorites** (Heart icon).
+4.  **Cart & Checkout**: Add items to the cart and proceed to our **Multi-step Checkout**.
+    *   *Note: Payment is simulated. You can use any dummy card data.*
+5.  **User Dashboard**: Upon registration, access your profile to view **Order History** and manage **Saved Addresses**.
+
+### 🛠️ Admin Dashboard
+To manage the catalog (Products, Stock, Prices), you must log in as an administrator.
+
+**Admin Credentials:**
+- **Email**: `admin@admin.com`
+- **Password**: `admin`
+
+**Admin Features:**
+- **Product Management**: Create, Edit, or Delete products.
+- **Stock Control**: Use the "Stock" button to adjust quantities per size/variant.
+
 ## Documentation
 
 - `STEP.md`: Detailed reconstruction guide and phases.
 - `FEATURES.md`: List of features and design system specifications.
 - `DATABASE.md`: Database schema and ERD.
+
+### 📄 Licence
+Distributed under the MIT License. See LICENSE for more information.
