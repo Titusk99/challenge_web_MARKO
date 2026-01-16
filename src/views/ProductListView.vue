@@ -18,7 +18,7 @@ const loadProducts = () => {
     const genderQuery = route.query.gender
     
     // Clear filters first
-    productStore.clearFilters()
+    productStore.clearFilters(false)
 
     // Handle Route Params (Footer Links)
     if (route.name === 'category-root') {
