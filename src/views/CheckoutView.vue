@@ -6,6 +6,7 @@ import { useCartStore } from '@/stores/cart'
 import { useToastStore } from '@/stores/toast'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import { CheckCircle, CreditCard, Truck } from 'lucide-vue-next'
+import { API_URL } from '@/config'
 
 const router = useRouter()
 const cartStore = useCartStore()
@@ -54,7 +55,7 @@ const processPayment = async () => {
   
   try {
     // 1. Create Payment Intent (Mock or Real)
-    const response = await fetch('http://localhost:8001/payment/create-payment-intent', {
+    const response = await fetch(`${API_URL}/payment/create-payment-intent`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -76,7 +77,7 @@ const processPayment = async () => {
 
     // 2. Confirm Order (Update status in DB)
     if (data.status === 'succeeded') {
-        const confirmResponse = await fetch(`http://localhost:8001/payment/confirm-order?payment_intent_id=${data.id}`, {
+        const confirmResponse = await fetch(`${API_URL}/payment/confirm-order?payment_intent_id=${data.id}`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
